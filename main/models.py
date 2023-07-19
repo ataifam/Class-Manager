@@ -5,7 +5,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 # Create your models here.
 
 class Subject(models.Model):
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, blank=True, null=True)
     name = models.CharField(max_length=60)
 
     def __str__(self):
@@ -14,7 +14,7 @@ class Subject(models.Model):
         )
 
 class Teacher(models.Model):
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, blank=True, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, blank=True, null=True)
@@ -27,7 +27,7 @@ class Teacher(models.Model):
         )
     
 class Student(models.Model):
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, blank=True, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     major = models.ForeignKey(Subject, on_delete=models.CASCADE, blank=True, null=True)
@@ -40,13 +40,13 @@ class Student(models.Model):
         )
 
 class Class(models.Model):
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, blank=True, null=True)
     name = models.CharField(max_length=60)
     building = models.ForeignKey(Subject, on_delete=models.CASCADE, blank=True, null=True)
     room = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(1000)], blank=True, null=True)
     time = models.DateTimeField()
     teacher = models.ForeignKey(Teacher, related_name="taught_by", on_delete=models.DO_NOTHING, blank=True, null=True)
-    students = models.ManyToManyField(Student, related_name="taken_by", blank=True, null=True)
+    students = models.ManyToManyField(Student, related_name="taken_by", blank=True)
 
     def __str__(self):
         return (
