@@ -10,4 +10,5 @@ urlpatterns = [
     path('login_view', views.login_view, name='login_view'),
     path('register_view', views.register_view, name='register_view'),
     path('create/<int:pk>', views.create, name='create'),
+    path('building/<str:pk>', views.create, name='create'),
 ]

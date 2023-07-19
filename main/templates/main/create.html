@@ -13,8 +13,17 @@
 
 <div id="studentSec" style="display: none">
   <form method="POST" action="">
-    {% csrf_token %} {{studentForm}}
-    <button name="student" type="submit">Submit</button>
+    {% csrf_token %}
+    <input name="major" placeholder="Major" list="majorList">
+        <datalist id="majorList">
+            <select id="majors">
+                {% for subject in subjects %}
+                    <option value="{{subject}}">{{subject}}</option>
+                {% endfor %}
+            </select>
+        </datalist><br>
+    {{studentForm}}
+    <button name="student_form" type="submit">Submit</button>
   </form>
 
   <button class="toggler" id="student">Go back</button>
@@ -22,8 +31,17 @@
 
 <div id="teacherSec" style="display: none">
   <form method="POST" action="">
-    {% csrf_token %} {{teacherForm}}
-    <button name="teacher" type="submit">Submit</button>
+    {% csrf_token %}
+    <input name="subject" placeholder="Subject" list="subjectList">
+        <datalist id="subjectList">
+            <select id="subjects">
+                {% for subject in subjects %}
+                    <option value="{{subject}}">{{subject}}</option>
+                {% endfor %}
+            </select>
+        </datalist><br>
+    {{teacherForm}}
+    <button name="teacher_form" type="submit">Submit</button>
   </form>
 
   <button class="toggler" id="teacher">Go back</button>
@@ -31,8 +49,9 @@
 
 <div id="subjectSec" style="display: none">
   <form method="POST" action="">
-    {% csrf_token %} {{subjectForm}}
-    <button name="subject" type="submit">Submit</button>
+    {% csrf_token %}
+    {{subjectForm}}
+    <button name="subject_form" type="submit">Submit</button>
   </form>
 
   <button class="toggler" id="subject">Go back</button>
@@ -40,8 +59,17 @@
 
 <div id="classSec" style="display: none">
   <form method="POST" action="">
-    {% csrf_token %} {{classForm}}
-    <button name="class" type="submit">Submit</button>
+    {% csrf_token %} 
+    <input name="building" placeholder="Building" list="buildingList">
+        <datalist id="buildingList">
+            <select id="buildings">
+                {% for subject in subjects %}
+                    <option value="{{subject}}">{{subject}}</option>
+                {% endfor %}
+            </select>
+        </datalist><br>
+    {{classForm}}
+    <button name="class_form" type="submit">Submit</button>
   </form>
 
   <button class="toggler" id="class">Go back</button>

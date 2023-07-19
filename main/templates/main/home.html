@@ -3,5 +3,19 @@
 
 {% block content %}
 
+{% if request.user.is_authenticated %}
+<a href="{% url 'main:create' request.user.id %}">Create</a>
+{% endif %}
+
+
+<div id="subject-container" style="display:flex; flex-direction: row;">
+{% for subject in subjects %}
+<div id="{{subject.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
+{{subject.name}}
+Classes: {{ subject.class_set.count }}
+</div>
+{% endfor %}
+</div>
+
 
 {% endblock %}
