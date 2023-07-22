@@ -12,7 +12,7 @@
 <div id="subject-container" style="display:flex; flex-direction: row;">
 {% for class in classes %}
 <div id="{{class.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
-<a href="{% url 'main:class' request.user.id class.name %}">{{class.name}}</a>
+<a href="{% url 'main:class' class.name %}">{{class.name}}</a>
 <br>
 Faculty: {{ class.teacher }}
 <br>

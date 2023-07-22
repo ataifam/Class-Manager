@@ -1,0 +1,46 @@
+{% extends "main/base.html" %}
+{% block title %} {{teacher}} {% endblock %}
+
+{% block content %}
+
+{% if request.user.is_authenticated %}
+<a href="{% url 'main:home' %}">Go Home</a>
+
+<h1><center>{{teacher}}</center></h1>
+<br>
+Specialization: {{teacher.subject}}
+<br>
+Skill: {{teacher.skill}}
+<br>
+Salary: {{teacher.salary}}
+<br>
+
+<h3>Classes</h3>
+<div id="subject-container" style="display:flex; flex-direction: row;">
+{% for class in classes %}
+<div id="{{class.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
+<a href="{% url 'main:class' class %}">{{class}}</a>
+<br>
+Students: {{ class.students.count }}
+<br>
+</div>
+{% endfor %}
+</div>
+
+<h3>Edit</h3>
+<form method="POST" action="{% url 'main:faculty' teacher.id %}">
+{% csrf_token %}
+<input name="subject" placeholder="Subject" list="subjectList">
+        <datalist id="subjectList">
+            <select id="subjects">
+                {% for subject in subjects %}
+                    <option value="{{subject}}">{{subject}}</option>
+                {% endfor %}
+            </select>
+        </datalist><br>
+{{form}}
+<button type="Submit">Submit</button>
+</form>
+
+{% endif %}
+{% endblock %}

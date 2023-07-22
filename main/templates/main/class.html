@@ -1,13 +1,13 @@
 {% extends "main/base.html" %}
-{% block title %} {{class.name}} {% endblock %}
+{% block title %} {{class}} {% endblock %}
 
 {% block content %}
 
 {% if request.user.is_authenticated %}
-<a href="{% url 'main:building' request.user.id class.building %}">Go back</a>
+<a href="{% url 'main:building' class.building %}">Go back</a>
 
 <h1><center>{{class.name|title}}</center></h1>
-<h1><center>{{class.teacher|title}}</center></h1>
+<h1><center><a href="{% url 'main:faculty' class.teacher.id %}">{{class.teacher|title}}</a></center></h1>
 
 <h3>Registered Students</h3>
 <div id="subject-container" style="display:flex; flex-direction: row;">
@@ -25,7 +25,7 @@
     {% for student in students %}
     {% if student not in class.students.all %}
     <div id="{{student.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
-    {{student}}</a>
+    <a href="{% url 'main:student' student.id %}">{{student}}</a>
     <br>
     Major: {{student.major}}
     <br>

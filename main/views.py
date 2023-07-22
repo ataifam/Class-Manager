@@ -10,11 +10,10 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def home(request):
-    userID = request.user.id
-    subjects = Subject.objects.filter(user_id=userID)
-    classes = Class.objects.filter(user_id=userID)
-    teachers = Teacher.objects.filter(user_id=userID)
-    students = Student.objects.filter(user_id=userID)
+    subjects = Subject.objects.filter(user_id=request.user.id)
+    classes = Class.objects.filter(user_id=request.user.id)
+    teachers = Teacher.objects.filter(user_id=request.user.id)
+    students = Student.objects.filter(user_id=request.user.id)
 
     return render(request, "main/home.html", {
         'subjects': subjects,
@@ -69,11 +68,8 @@ def logout_view(request):
         return redirect('main:login_view')
 
 @login_required(login_url="main:login_view")
-def create(request, pk):
-    if pk != request.user.id:
-        messages.error(request, "You cannot invade someone else's school!")
-        redirect('main:home')
-    user = get_object_or_404(User, id=pk)
+def create(request):
+    user = get_object_or_404(User, id=request.user.id)
     subjects = Subject.objects.all()
     subjectForm = SubjectForm
     classForm = ClassForm
@@ -116,9 +112,8 @@ def create(request, pk):
                 teacher_subject, created = Subject.objects.get_or_create(user=user, name=subject)
                 teacher.subject = teacher_subject
                 teacher.save()
-                print('p')
                 messages.success(request, "Teacher creation successful!")
-        return redirect('main:create', pk)
+        return redirect('main:create', request.user.id)
     return render(request, "main/create.html", {
         'subjectForm': subjectForm,
         'classForm': classForm,
@@ -128,14 +123,11 @@ def create(request, pk):
     })
 
 @login_required(login_url="main:login_view")
-def building(request, pk, subject):
-    if pk != request.user.id:
-        messages.error(request, "You cannot invade someone else's school!")
-        redirect('main:home')
-    user_subject = get_object_or_404(Subject, user_id=pk, name=subject)
-    classes = Class.objects.filter(user_id=pk, building=user_subject)
-    teachers = Teacher.objects.filter(user_id=pk)
-    students = Student.objects.filter(user_id=pk)
+def building(request, subject):
+    user_subject = get_object_or_404(Subject, user_id=request.user.id, name=subject)
+    classes = Class.objects.filter(user_id=request.user.id, building=user_subject)
+    teachers = Teacher.objects.filter(user_id=request.user.id)
+    students = Student.objects.filter(user_id=request.user.id)
 
     return render(request, "main/building.html", {
         'subject': user_subject,
@@ -145,16 +137,40 @@ def building(request, pk, subject):
     })
 
 @login_required(login_url="main:login_view")
-def class_view(request, pk, name):
-    if pk != request.user.id:
-        messages.error(request, "You cannot invade someone else's school!")
-        redirect('main:home')
-    user_class = get_object_or_404(Class, user_id=pk, name=name)
-    teachers = Teacher.objects.filter(user_id=pk)
-    students = Student.objects.filter(user_id=pk)
+def class_view(request, name):
+    user_class = get_object_or_404(Class, user_id=request.user.id, name=name)
+    teachers = Teacher.objects.filter(user_id=request.user.id)
+    students = Student.objects.filter(user_id=request.user.id)
 
     return render(request, "main/class.html", {
         'class': user_class,
         'teachers': teachers,
         'students': students,
     })
+
+@login_required(login_url="main:login_view")
+def faculty(request, id):
+    teacher = get_object_or_404(Teacher, user_id=request.user.id, id=id)
+    classes = Class.objects.filter(user_id=request.user.id, teacher=teacher)
+    subjects = Subject.objects.filter(user_id=request.user.id)
+    teacherForm = TeacherForm(instance=teacher)
+    if request.method == 'POST':
+        teacherForm = TeacherForm(request.POST, instance=teacher)
+        if teacherForm.is_valid:
+            teacher = teacherForm.save(commit=False)
+            subject = request.POST.get('subject')
+            teacher_subject, created = Subject.objects.get_or_create(user_id=request.user.id, name=subject)
+            teacher.subject = teacher_subject
+            teacher.save()
+            messages.success(request, "Teacher creation successful!")
+
+
+    return render(request, "main/faculty.html", {
+        'teacher': teacher,
+        'classes': classes,
+        'subjects': subjects,
+        'form': teacherForm
+    })
+
+def student(request):
+    pass
