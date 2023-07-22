@@ -11,8 +11,13 @@
 <div id="subject-container" style="display:flex; flex-direction: row;">
 {% for subject in subjects %}
 <div id="{{subject.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
-{{subject.name}}
+<a href="{% url 'main:building' request.user.id subject.name %}">{{subject.name}}</a>
+<br>
 Classes: {{ subject.class_set.count }}
+<br>
+Faculty: {{ subject.teacher_set.count }}
+<br>
+Students: {{ subject.student_set.count }}
 </div>
 {% endfor %}
 </div>

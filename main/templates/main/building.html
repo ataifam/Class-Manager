@@ -1,0 +1,25 @@
+{% extends "main/base.html" %}
+{% block title %} {{subject.name}} {% endblock %}
+
+{% block content %}
+
+{% if request.user.is_authenticated %}
+<a href="{% url 'main:home' %}">Go back</a>
+
+<h1><center>{{subject.name|title}}</center></h1>
+
+
+<div id="subject-container" style="display:flex; flex-direction: row;">
+{% for class in classes %}
+<div id="{{class.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
+<a href="{% url 'main:class' request.user.id class.name %}">{{class.name}}</a>
+<br>
+Faculty: {{ class.teacher }}
+<br>
+Students: {{ class.students.count }}
+</div>
+{% endfor %}
+</div>
+
+{% endif %}
+{% endblock %}

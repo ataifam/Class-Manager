@@ -61,6 +61,12 @@ def register_view(request):
         'form': form,
     })
 
+def logout_view(request):
+    if request.user.is_authenticated:
+        logout(request)
+        messages.success(request, 'Logged out successfully.')
+        return redirect('main:login_view')
+
 def create(request, pk):
     user = get_object_or_404(User, id=pk)
     subjects = Subject.objects.all()
@@ -114,4 +120,28 @@ def create(request, pk):
         'studentForm': studentForm,
         'teacherForm': teacherForm,
         'subjects': subjects,
+    })
+
+def building(request, pk, subject):
+    user_subject = get_object_or_404(Subject, user_id=pk, name=subject)
+    classes = Class.objects.filter(user_id=pk, building=user_subject)
+    teachers = Teacher.objects.filter(user_id=pk)
+    students = Student.objects.filter(user_id=pk)
+
+    return render(request, "main/building.html", {
+        'subject': user_subject,
+        'classes': classes,
+        'teachers': teachers,
+        'students': students,
+    })
+
+def class_view(request, pk, name):
+    user_class = get_object_or_404(Class, user_id=pk, name=name)
+    teachers = Teacher.objects.filter(user_id=pk)
+    students = Student.objects.filter(user_id=pk)
+
+    return render(request, "main/class.html", {
+        'class': user_class,
+        'teachers': teachers,
+        'students': students,
     })

@@ -23,12 +23,7 @@ class ClassForm(forms.ModelForm):
     class Meta:
         model = Class
         fields = '__all__'
-        exclude = ['user', 'building']
-
-        widgets = {
-            'start_time': forms.DateTimeField(input_formats=["%d %b %Y %H:%M:%S %Z"]),
-            'end_time': forms.DateTimeField(input_formats=["%d %b %Y %H:%M:%S %Z"])
-        }
+        exclude = ['user', 'building', 'students']
 
 class LoginForm(forms.Form):
     username = forms.CharField(required=True)

@@ -1,0 +1,38 @@
+{% extends "main/base.html" %}
+{% block title %} {{class.name}} {% endblock %}
+
+{% block content %}
+
+{% if request.user.is_authenticated %}
+<a href="{% url 'main:building' request.user.id class.building %}">Go back</a>
+
+<h1><center>{{class.name|title}}</center></h1>
+<h1><center>{{class.teacher|title}}</center></h1>
+
+<h3>Registered Students</h3>
+<div id="subject-container" style="display:flex; flex-direction: row;">
+{% for student in class.students.all %}
+<div id="{{student.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
+{{student}}</a>
+</div>
+{% endfor %}
+</div>
+
+<hr>
+
+<h3>Unregistered Students</h3>
+<div id="subject-container" style="display:flex; flex-direction: row;">
+    {% for student in students %}
+    {% if student not in class.students.all %}
+    <div id="{{student.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
+    {{student}}</a>
+    <br>
+    Major: {{student.major}}
+    <br>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+
+{% endif %}
+{% endblock %}
