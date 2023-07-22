@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -37,7 +38,7 @@ def login_view(request):
                 return redirect('main:home')
             else:
                 messages.error(request, 'Error logging in. Please try again.')
-                return redirect('social:login')
+                return redirect('main:login_view')
 
     return render(request, "main/login.html", {
         'form': form,
@@ -67,7 +68,11 @@ def logout_view(request):
         messages.success(request, 'Logged out successfully.')
         return redirect('main:login_view')
 
+@login_required(login_url="main:login_view")
 def create(request, pk):
+    if pk != request.user.id:
+        messages.error(request, "You cannot invade someone else's school!")
+        redirect('main:home')
     user = get_object_or_404(User, id=pk)
     subjects = Subject.objects.all()
     subjectForm = SubjectForm
@@ -122,7 +127,11 @@ def create(request, pk):
         'subjects': subjects,
     })
 
+@login_required(login_url="main:login_view")
 def building(request, pk, subject):
+    if pk != request.user.id:
+        messages.error(request, "You cannot invade someone else's school!")
+        redirect('main:home')
     user_subject = get_object_or_404(Subject, user_id=pk, name=subject)
     classes = Class.objects.filter(user_id=pk, building=user_subject)
     teachers = Teacher.objects.filter(user_id=pk)
@@ -135,7 +144,11 @@ def building(request, pk, subject):
         'students': students,
     })
 
+@login_required(login_url="main:login_view")
 def class_view(request, pk, name):
+    if pk != request.user.id:
+        messages.error(request, "You cannot invade someone else's school!")
+        redirect('main:home')
     user_class = get_object_or_404(Class, user_id=pk, name=name)
     teachers = Teacher.objects.filter(user_id=pk)
     students = Student.objects.filter(user_id=pk)
