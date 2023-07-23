@@ -113,7 +113,7 @@ def create(request):
                 teacher.subject = teacher_subject
                 teacher.save()
                 messages.success(request, "Teacher creation successful!")
-        return redirect('main:create', request.user.id)
+        return redirect('main:create')
     return render(request, "main/create.html", {
         'subjectForm': subjectForm,
         'classForm': classForm,
@@ -141,6 +141,21 @@ def class_view(request, name):
     user_class = get_object_or_404(Class, user_id=request.user.id, name=name)
     teachers = Teacher.objects.filter(user_id=request.user.id)
     students = Student.objects.filter(user_id=request.user.id)
+
+    if request.method == 'POST':
+        # register student for class button clicked
+        if 'register' in request.POST:
+            pk = request.POST.get('register', '')
+            student = get_object_or_404(Student, user_id=request.user.id, id=pk)
+            user_class.students.add(student)
+            messages.success(request, 'Student registered successfully!')
+        # deregister student for class button clicked
+        elif 'unregister' in request.POST:
+            pk = request.POST.get('unregister', '')
+            student = get_object_or_404(Student, user_id=request.user.id, id=pk)
+            user_class.students.remove(student)
+            messages.success(request, 'Student unregistered successfully!')
+        redirect('main:class', name)
 
     return render(request, "main/class.html", {
         'class': user_class,

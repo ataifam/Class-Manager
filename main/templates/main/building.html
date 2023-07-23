@@ -6,7 +6,7 @@
 {% if request.user.is_authenticated %}
 <a href="{% url 'main:home' %}">Go back</a>
 
-<h1><center>{{subject.name|title}}</center></h1>
+<h1><center>{{subject|capfirst}}</center></h1>
 
 
 <div id="subject-container" style="display:flex; flex-direction: row;">

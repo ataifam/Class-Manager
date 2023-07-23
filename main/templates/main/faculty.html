@@ -6,7 +6,7 @@
 {% if request.user.is_authenticated %}
 <a href="{% url 'main:home' %}">Go Home</a>
 
-<h1><center>{{teacher}}</center></h1>
+<h1><center>{{teacher|capfirst}}</center></h1>
 <br>
 Specialization: {{teacher.subject}}
 <br>

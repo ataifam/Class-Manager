@@ -11,7 +11,7 @@
 <div id="subject-container" style="display:flex; flex-direction: row;">
 {% for subject in subjects %}
 <div id="{{subject.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
-<a href="{% url 'main:building' subject.name %}">{{subject.name}}</a>
+<a href="{% url 'main:building' subject %}">{{subject|capfirst}}</a>
 <br>
 Classes: {{ subject.class_set.count }}
 <br>
