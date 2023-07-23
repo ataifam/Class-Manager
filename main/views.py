@@ -14,6 +14,7 @@ def home(request):
     classes = Class.objects.filter(user_id=request.user.id)
     teachers = Teacher.objects.filter(user_id=request.user.id)
     students = Student.objects.filter(user_id=request.user.id)
+    print(request.user.id)
 
     return render(request, "main/home.html", {
         'subjects': subjects,
@@ -71,10 +72,10 @@ def logout_view(request):
 def create(request):
     user = get_object_or_404(User, id=request.user.id)
     subjects = Subject.objects.all()
-    subjectForm = SubjectForm
-    classForm = ClassForm
-    studentForm = StudentForm
-    teacherForm = TeacherForm
+    subjectForm = SubjectForm()
+    classForm = ClassForm()
+    studentForm = StudentForm()
+    teacherForm = TeacherForm()
     
     if request.method == 'POST':
         subjectForm = SubjectForm(request.POST)
@@ -90,7 +91,11 @@ def create(request):
             if studentForm.is_valid():
                 student = studentForm.save(commit=False)
                 student.user = user
-                major = request.POST.get('major')
+                # check for empty input
+                major = request.POST.get('major') if bool(request.POST.get('major', False)) else None
+                if major is None:
+                    messages.error(request, "Major cannot be blank!")
+                    return redirect('main:create')
                 subject, created = Subject.objects.get_or_create(user=user, name=major)
                 student.major = subject
                 student.save()
@@ -99,7 +104,11 @@ def create(request):
             if classForm.is_valid():
                 schoolClass = classForm.save(commit=False)
                 schoolClass.user = user
-                building = request.POST.get('building')
+                # check for empty input
+                building = request.POST.get('building') if bool(request.POST.get('building', False)) else None
+                if building is None:
+                    messages.error(request, "Building cannot be blank!")
+                    return redirect('main:create')
                 subject, created = Subject.objects.get_or_create(user=user, name=building)
                 schoolClass.building = subject
                 schoolClass.save()
@@ -108,7 +117,12 @@ def create(request):
             if teacherForm.is_valid():
                 teacher = teacherForm.save(commit=False)
                 teacher.user = user
-                subject = request.POST.get('subject')
+                # check for empty input
+                print(request.POST.get('subject'))
+                subject = request.POST.get('subject') if bool(request.POST.get('subject', False)) else None
+                if subject is None:
+                    messages.error(request, "Subject cannot be blank!")
+                    return redirect('main:create')
                 teacher_subject, created = Subject.objects.get_or_create(user=user, name=subject)
                 teacher.subject = teacher_subject
                 teacher.save()
@@ -123,8 +137,8 @@ def create(request):
     })
 
 @login_required(login_url="main:login_view")
-def building(request, subject):
-    user_subject = get_object_or_404(Subject, user_id=request.user.id, name=subject)
+def building(request, pk):
+    user_subject = get_object_or_404(Subject, user_id=request.user.id, id=pk)
     classes = Class.objects.filter(user_id=request.user.id, building=user_subject)
     teachers = Teacher.objects.filter(user_id=request.user.id)
     students = Student.objects.filter(user_id=request.user.id)
@@ -155,7 +169,7 @@ def class_view(request, name):
             student = get_object_or_404(Student, user_id=request.user.id, id=pk)
             user_class.students.remove(student)
             messages.success(request, 'Student unregistered successfully!')
-        redirect('main:class', name)
+        return redirect('main:class', name)
 
     return render(request, "main/class.html", {
         'class': user_class,
@@ -164,8 +178,8 @@ def class_view(request, name):
     })
 
 @login_required(login_url="main:login_view")
-def faculty(request, id):
-    teacher = get_object_or_404(Teacher, user_id=request.user.id, id=id)
+def faculty(request, pk):
+    teacher = get_object_or_404(Teacher, user_id=request.user.id, id=pk)
     classes = Class.objects.filter(user_id=request.user.id, teacher=teacher)
     subjects = Subject.objects.filter(user_id=request.user.id)
     teacherForm = TeacherForm(instance=teacher)
@@ -173,7 +187,10 @@ def faculty(request, id):
         teacherForm = TeacherForm(request.POST, instance=teacher)
         if teacherForm.is_valid:
             teacher = teacherForm.save(commit=False)
-            subject = request.POST.get('subject')
+            subject = request.POST.get('subject') if bool(request.POST.get('subject', False)) else None
+            if subject is None:
+                messages.error(request, "Subject cannot be blank!")
+                return redirect(request.META.get('HTTP_REFERER', '/'))
             teacher_subject, created = Subject.objects.get_or_create(user_id=request.user.id, name=subject)
             teacher.subject = teacher_subject
             teacher.save()
@@ -187,5 +204,28 @@ def faculty(request, id):
         'form': teacherForm
     })
 
-def student(request):
-    pass
+def student(request, pk):
+    student = get_object_or_404(Student, user_id=request.user.id, id=pk)
+    classes = Class.objects.filter(user_id=request.user.id)
+    subjects = Subject.objects.filter(user_id=request.user.id)
+    studentForm = StudentForm(instance=student)
+    if request.method == 'POST':
+        studentForm = StudentForm(request.POST, instance=student)
+        if studentForm.is_valid:
+            student = studentForm.save(commit=False)
+            major = request.POST.get('major') if bool(request.POST.get('major', False)) else None
+            if major is None:
+                messages.error(request, "Major cannot be blank!")
+                return redirect(request.META.get('HTTP_REFERER', '/'))
+            subject, created = Subject.objects.get_or_create(user_id=request.user.id, name=major)
+            student.major = subject
+            student.save()
+            messages.success(request, "Teacher creation successful!")
+
+
+    return render(request, "main/student.html", {
+        'student': student,
+        'classes': classes,
+        'subjects': subjects,
+        'form': studentForm
+    })

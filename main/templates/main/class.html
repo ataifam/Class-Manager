@@ -4,16 +4,20 @@
 {% block content %}
 
 {% if request.user.is_authenticated %}
-<a href="{% url 'main:building' class.building %}">Go back</a>
+<a href="{% url 'main:building' class.building.id %}">Go back</a>
 
 <h1><center>{{class.name|capfirst}}</center></h1>
 <h1><center><a href="{% url 'main:faculty' class.teacher.id %}">{{class.teacher|title}}</a></center></h1>
+<h3><center>Room {{ class.room }}</center></h3>
+<br>
 
 <h3>Registered Students</h3>
-<div id="subject-container" style="display:flex; flex-direction: row;">
+<div id="subject-container" style="display:flex; flex-direction: row; flex-wrap: wrap;">
 {% for student in class.students.all %}
 <div id="{{student.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
-{{student|title}}</a>
+<a href="{% url 'main:student' student.id %}">{{student|title}}</a>
+<br>
+    Major: {{student.major}}
 <br>
 <form method="POST" action="">
 {% csrf_token %} 
@@ -30,9 +34,9 @@
     {% for student in students %}
     {% if student not in class.students.all %}
     <div id="{{student.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
-    <a href="{% url 'main:student' student.id %}">{{student}}</a>
+    <a href="{% url 'main:student' student.id %}">{{student|title}}</a>
     <br>
-    Major: {{student.major}}
+        Major: {{student.major}}
     <br>
     <form method="POST" action="">
     {% csrf_token %} 

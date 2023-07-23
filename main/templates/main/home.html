@@ -5,13 +5,14 @@
 
 {% if request.user.is_authenticated %}
 <a href="{% url 'main:create' %}">Create</a>
-{% endif %}
+
 
 
 <div id="subject-container" style="display:flex; flex-direction: row;">
 {% for subject in subjects %}
+{% if subject %}
 <div id="{{subject.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
-<a href="{% url 'main:building' subject %}">{{subject|capfirst}}</a>
+<a href="{% url 'main:building' subject.id %}">{{subject|capfirst}}</a>
 <br>
 Classes: {{ subject.class_set.count }}
 <br>
@@ -19,8 +20,9 @@ Faculty: {{ subject.teacher_set.count }}
 <br>
 Students: {{ subject.student_set.count }}
 </div>
+{% endif %}
 {% endfor %}
 </div>
-
+{% endif %}
 
 {% endblock %}

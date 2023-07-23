@@ -1,0 +1,52 @@
+{% extends "main/base.html" %}
+{% block title %} {{student}} {% endblock %}
+
+{% block content %}
+
+{% if request.user.is_authenticated %}
+<a href="{% url 'main:home' %}">Go Home</a>
+
+<h1><center>{{student|title}}</center></h1>
+<br>
+Major: {{student.major}}
+<br>
+Year: {{student.year}}
+<br>
+Average Grade: {{student.average_grade}}
+<br>
+
+<h3>Classes</h3>
+<div id="subject-container" style="display:flex; flex-direction: row; flex-wrap: wrap;">
+{% for class in classes %}
+{% if student in class.students.all %}
+<div id="{{class.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
+<a href="{% url 'main:class' class %}">{{class}}</a>
+<br>
+Instructor: {{class.teacher}}
+<br>
+Room {{class.room}}
+<br>
+Students: {{ class.students.count }}
+<br>
+</div>
+{% endif %}
+{% endfor %}
+</div>
+
+<h3>Edit</h3>
+<form method="POST" action="{% url 'main:student' student.id %}">
+{% csrf_token %}
+<input name="major" placeholder="Major" list="majorList">
+        <datalist id="majorList">
+            <select id="majors">
+                {% for subject in subjects %}
+                    <option value="{{subject}}">{{subject}}</option>
+                {% endfor %}
+            </select>
+        </datalist><br>
+{{form}}
+<button type="Submit">Submit</button>
+</form>
+
+{% endif %}
+{% endblock %}

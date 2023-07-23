@@ -1,6 +1,12 @@
 {% extends "main/base.html" %} {% block title %} Create {% endblock %} 
 {% block content %}
 
+{% if messages %}
+{% for message in messages %}
+{{message}}
+{% endfor %}
+{% endif %}
+
 <div id="start">
   <button class="toggler" id="student">Student</button>
   <br />
@@ -14,7 +20,7 @@
 <div id="studentSec" style="display: none">
   <form method="POST" action="">
     {% csrf_token %}
-    <input name="major" placeholder="Major" list="majorList">
+    <input pattern=".{1,}" required type="text" name="major" placeholder="Major" list="majorList">
         <datalist id="majorList">
             <select id="majors">
                 {% for subject in subjects %}
@@ -32,7 +38,7 @@
 <div id="teacherSec" style="display: none">
   <form method="POST" action="">
     {% csrf_token %}
-    <input name="subject" placeholder="Subject" list="subjectList">
+    <input type="text" pattern=".{1,}" required name="subject" placeholder="Subject" list="subjectList">
         <datalist id="subjectList">
             <select id="subjects">
                 {% for subject in subjects %}
@@ -60,7 +66,7 @@
 <div id="classSec" style="display: none">
   <form method="POST" action="">
     {% csrf_token %} 
-    <input name="building" placeholder="Building" list="buildingList">
+    <input type="text" pattern=".{1,}" required name="building" placeholder="Building" list="buildingList">
         <datalist id="buildingList">
             <select id="buildings">
                 {% for subject in subjects %}
