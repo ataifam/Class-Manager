@@ -23,7 +23,7 @@ class ClassForm(forms.ModelForm):
     class Meta:
         model = Class
         fields = '__all__'
-        exclude = ['user', 'building', 'students']
+        exclude = ['user', 'building', 'students', 'teacher']
 
 class LoginForm(forms.Form):
     username = forms.CharField(required=True)

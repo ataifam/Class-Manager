@@ -12,7 +12,6 @@ urlpatterns = [
     path('register_view', views.register_view, name='register_view'),
     path('logout_view', views.logout_view, name='logout_view'),
 
-    path('create', views.create, name='create'),
     path('delete/<int:pk>/<str:option>', views.delete, name='delete'),
 
     path('building/<int:pk>', views.building, name='building'),

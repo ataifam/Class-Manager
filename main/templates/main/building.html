@@ -13,7 +13,7 @@
 {% for class in classes %}
 <div id="{{class.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
 <a href="{% url 'main:class' class.name %}">{{class.name}}</a>
-<a href="{% url 'main:delete' class.id 'class' %}"><button>Delete Subject</button></a>
+<a href="{% url 'main:delete' class.id 'class' %}"><button>Delete Class</button></a>
 <br>
 Faculty: {{ class.teacher }}
 <br>
@@ -22,7 +22,45 @@ Room {{ class.room }}
 Students: {{ class.students.count }}
 </div>
 {% endfor %}
+<div id="start_create_class" style="padding: 5%; margin: 5%; border: 2px solid">
+    New class?
+    <br>
+    <button class="toggler" id="class">Create</button>
+    </div>
+<div id="create_class" style="padding: 5%; margin: 5%; border: 2px solid; display: none;">
+<form method="POST" action="">
+    {% csrf_token %} 
+    {{form}}
+    <br>
+    <button type="submit">Submit</button>
+  </form>
+  <button class="toggler" id="class">Cancel</button>
+</div>
 </div>
 
 {% endif %}
+
+<script>
+    function toggleEditSection(id) {
+      let category;
+      if ((category = document.getElementById(id)) != null) {
+        if (category.style.display == "none") {
+          category.style.display = "block";
+          document.querySelector("#start_"+id).style.display = "none";
+        } else {
+          category.style.display = "none";
+          document.querySelector("#start_"+id).style.display = "block";
+        }
+      }
+    }
+  
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".toggler").forEach((el) => {
+        el.onclick = (el) => {
+          toggleEditSection('create_'+el.target.id);
+        };
+      });
+    });
+  </script>
+
 {% endblock %}

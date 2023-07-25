@@ -7,14 +7,14 @@
 <a href="{% url 'main:building' class.building.id %}">Go back</a>
 
 <h1><center>{{class.name|capfirst}}</center></h1>
-<h1><center><a href="{% url 'main:faculty' class.teacher.id %}">{{class.teacher|title}}</a></center></h1>
+<h1><center>{% if class.teacher %}<a href="{% url 'main:faculty' class.teacher.id %}">{{class.teacher|title}}</a>{% else %}None{% endif %}</center></h1>
 <h3><center>Room {{ class.room }}</center></h3>
 <br>
-<h3>Substitute?</h3>
+<h3>Assign?</h3>
 <div id="subject-container" style="display:flex; flex-direction: row; flex-wrap: wrap;">
 {% for teacher in class.building.teacher_set.all %}
 {% if teacher != class.teacher %}
-<div id="{{student.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
+<div id="{{teacher.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
     {{teacher|title}}
     <form method="POST" action="">
         {% csrf_token %} 
@@ -23,6 +23,19 @@
 </div>
 {% endif %}
 {% endfor %}
+<div id="start_create_teacher">
+<button class="toggler" id="teacher" style="padding: 5%; margin: 5%; border: 2px solid">Create</button>
+</div>
+<div id="create_teacher" style="padding: 5%; margin: 5%; border: 2px solid; display: none">
+    {{teacher|title}}
+    <form method="POST" action="">
+        {% csrf_token %} 
+        {{teacherForm}}
+        <button name="teacher_form" type="submit">Submit</button>
+    </form>
+    <br>
+    <button class="toggler" id="teacher">Go back</button>
+</div>
 </div>
 <br>
 <h3>Registered Students</h3>
@@ -59,7 +72,54 @@
     </div>
     {% endif %}
     {% endfor %}
+    <div id="start_create_student" style="padding: 5%; margin: 5%; border: 2px solid">
+        New Student?
+    <button class="toggler" id="student">Create</button>
+    </div>
+    <div id="create_student" style="padding: 5%; margin: 5%; border: 2px solid; display: none">
+        <form method="POST" action="" name="student_form">
+        {% csrf_token %}
+        <input pattern=".{1,}" required type="text" name="major" placeholder="Major" list="majorList">
+        <datalist id="majorList">
+            <select id="majors">
+                {% for subject in subjects %}
+                    <option value="{{subject}}">{{subject}}</option>
+                {% endfor %}
+            </select>
+        </datalist>
+        <br>
+        {{studentForm}}
+        <br>
+        <button name="student_form" type="submit">Submit</button>
+        </form>
+        <br>
+        <button class="toggler" id="student">Cancel</button>
+    </div>
 </div>
 
 {% endif %}
+
+<script>
+    function toggleEditSection(id) {
+      let category;
+      if ((category = document.getElementById(id)) != null) {
+        if (category.style.display == "none") {
+          category.style.display = "block";
+          document.querySelector("#start_"+id).style.display = "none";
+        } else {
+          category.style.display = "none";
+          document.querySelector("#start_"+id).style.display = "block";
+        }
+      }
+    }
+  
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".toggler").forEach((el) => {
+        el.onclick = (el) => {
+          toggleEditSection('create_'+el.target.id);
+        };
+      });
+    });
+  </script>
+
 {% endblock %}

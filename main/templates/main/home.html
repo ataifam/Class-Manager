@@ -8,22 +8,59 @@
 
 
 
-<div id="subject-container" style="display:flex; flex-direction: row;">
-{% for subject in subjects %}
-{% if subject %}
-<div id="{{subject.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
-<a href="{% url 'main:building' subject.id %}">{{subject|capfirst}}</a>
-<a href="{% url 'main:delete' subject.id 'subject' %}"><button>Delete Subject</button></a>
-<br>
-Classes: {{ subject.class_set.count }}
-<br>
-Faculty: {{ subject.teacher_set.count }}
-<br>
-Students: {{ subject.student_set.count }}
+<div id="subject-container" style="display:flex; flex-direction: row; flex-wrap: wrap;">
+    {% for subject in subjects %}
+    {% if subject %}
+        <div id="{{subject.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
+        <a href="{% url 'main:building' subject.id %}">{{subject|capfirst}}</a>
+        <a href="{% url 'main:delete' subject.id 'subject' %}"><button>Delete Subject</button></a>
+        <br>
+        Classes: {{ subject.class_set.count }}
+        <br>
+        Faculty: {{ subject.teacher_set.count }}
+        <br>
+        Students: {{ subject.student_set.count }}
+        </div>
+    {% endif %}
+    {% endfor %}
+    <div id="start_create_subject" style="padding: 5%; margin: 5%; border: 2px solid">
+        New building?
+        <br>
+        <button class="toggler" id="subject">Create</button>
+        </div>
+    <div id="create_subject" style="padding: 5%; margin: 5%; border: 2px solid; display: none">
+        <form method="POST" action="">
+            {% csrf_token %}
+            {{form}}
+            <br>
+            <button type="submit">Submit</button>
+        </form>
+        <button class="toggler" id="subject">Cancel</button>
+    </div>
 </div>
 {% endif %}
-{% endfor %}
-</div>
-{% endif %}
+
+<script>
+    function toggleEditSection(id) {
+      let category;
+      if ((category = document.getElementById(id)) != null) {
+        if (category.style.display == "none") {
+          category.style.display = "block";
+          document.querySelector("#start_"+id).style.display = "none";
+        } else {
+          category.style.display = "none";
+          document.querySelector("#start_"+id).style.display = "block";
+        }
+      }
+    }
+  
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".toggler").forEach((el) => {
+        el.onclick = (el) => {
+          toggleEditSection('create_'+el.target.id);
+        };
+      });
+    });
+  </script>
 
 {% endblock %}
