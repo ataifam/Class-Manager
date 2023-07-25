@@ -7,6 +7,7 @@
 <a href="{% url 'main:home' %}">Go Home</a>
 
 <h1><center>{{student|title}}</center></h1>
+<a href="{% url 'main:delete' student.id 'student' %}"><button>Delete Student</button></a>
 <br>
 Major: {{student.major}}
 <br>

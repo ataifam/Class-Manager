@@ -7,6 +7,7 @@
 <a href="{% url 'main:home' %}">Go Home</a>
 
 <h1><center>{{teacher|title}}</center></h1>
+<a href="{% url 'main:delete' teacher.id 'teacher' %}"><button>Delete Teacher</button></a>
 <br>
 Specialization: {{teacher.subject}}
 <br>

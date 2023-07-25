@@ -10,7 +10,21 @@
 <h1><center><a href="{% url 'main:faculty' class.teacher.id %}">{{class.teacher|title}}</a></center></h1>
 <h3><center>Room {{ class.room }}</center></h3>
 <br>
-
+<h3>Substitute?</h3>
+<div id="subject-container" style="display:flex; flex-direction: row; flex-wrap: wrap;">
+{% for teacher in class.building.teacher_set.all %}
+{% if teacher != class.teacher %}
+<div id="{{student.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
+    {{teacher|title}}
+    <form method="POST" action="">
+        {% csrf_token %} 
+        <button type="submit" name="substitute" value="{{teacher.id}}">Substitute</button>
+    </form>
+</div>
+{% endif %}
+{% endfor %}
+</div>
+<br>
 <h3>Registered Students</h3>
 <div id="subject-container" style="display:flex; flex-direction: row; flex-wrap: wrap;">
 {% for student in class.students.all %}
@@ -38,7 +52,7 @@
     <br>
         Major: {{student.major}}
     <br>
-    <form method="POST" action="">
+    <form method="POST" action="" name="registration">
     {% csrf_token %} 
     <button type="submit" name="register" value="{{student.id}}">Register</button>
     </form>

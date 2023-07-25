@@ -13,6 +13,7 @@
 {% for class in classes %}
 <div id="{{class.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
 <a href="{% url 'main:class' class.name %}">{{class.name}}</a>
+<a href="{% url 'main:delete' class.id 'class' %}"><button>Delete Subject</button></a>
 <br>
 Faculty: {{ class.teacher }}
 <br>

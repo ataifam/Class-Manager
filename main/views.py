@@ -137,6 +137,27 @@ def create(request):
     })
 
 @login_required(login_url="main:login_view")
+def delete(request, pk, option):
+    user = request.user
+    if option == 'subject':
+        subject = get_object_or_404(Subject, user_id=user.id, id=pk)
+        subject.delete()
+        messages.success(request, "Subject successfully deleted!")
+    elif option == 'class':
+        user_class = get_object_or_404(Class, user_id=user.id, id=pk)
+        user_class.delete()
+        messages.success(request, "Class successfully deleted!")
+    elif option == 'teacher':
+        teacher = get_object_or_404(Teacher, user_id=user.id, id=pk)
+        teacher.delete()
+        messages.success(request, "Teacher successfully deleted!")
+    elif option == 'student':
+        student = get_object_or_404(Student, user_id=user.id, id=pk)
+        student.delete()
+        messages.success(request, "Student successfully deleted!")
+    return redirect('main:home')
+
+@login_required(login_url="main:login_view")
 def building(request, pk):
     user_subject = get_object_or_404(Subject, user_id=request.user.id, id=pk)
     classes = Class.objects.filter(user_id=request.user.id, building=user_subject)
@@ -169,6 +190,12 @@ def class_view(request, name):
             student = get_object_or_404(Student, user_id=request.user.id, id=pk)
             user_class.students.remove(student)
             messages.success(request, 'Student unregistered successfully!')
+        elif 'substitute' in request.POST:
+            pk = request.POST.get('substitute', '')
+            teacher = get_object_or_404(Teacher, user_id=request.user.id, id=pk)
+            user_class.teacher = teacher
+            user_class.save()
+            messages.success(request, 'Teacher changed successfully!')
         return redirect('main:class', name)
 
     return render(request, "main/class.html", {
@@ -220,7 +247,7 @@ def student(request, pk):
             subject, created = Subject.objects.get_or_create(user_id=request.user.id, name=major)
             student.major = subject
             student.save()
-            messages.success(request, "Teacher creation successful!")
+            messages.success(request, "Student modification successful!")
 
 
     return render(request, "main/student.html", {

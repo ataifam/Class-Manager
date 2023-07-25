@@ -13,6 +13,7 @@
 {% if subject %}
 <div id="{{subject.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
 <a href="{% url 'main:building' subject.id %}">{{subject|capfirst}}</a>
+<a href="{% url 'main:delete' subject.id 'subject' %}"><button>Delete Subject</button></a>
 <br>
 Classes: {{ subject.class_set.count }}
 <br>
