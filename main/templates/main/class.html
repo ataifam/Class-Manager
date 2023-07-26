@@ -23,8 +23,9 @@
 </div>
 {% endif %}
 {% endfor %}
-<div id="start_create_teacher">
-<button class="toggler" id="teacher" style="padding: 5%; margin: 5%; border: 2px solid">Create</button>
+<div id="start_create_teacher" style="padding: 5%; margin: 5%; border: 2px solid">
+    New Teacher?
+<button class="toggler" id="teacher">Create</button>
 </div>
 <div id="create_teacher" style="padding: 5%; margin: 5%; border: 2px solid; display: none">
     {{teacher|title}}
@@ -38,9 +39,18 @@
 </div>
 </div>
 <br>
+<form action="" id="filter">
+    <select name="q">
+        <option value="value" selected>By major</option>
+        {% for subject in subjects %}
+      <option value="{{subject}}">{{subject}}</option>
+      {% endfor %}
+    </select>
+</form>
 <h3>Registered Students</h3>
 <div id="subject-container" style="display:flex; flex-direction: row; flex-wrap: wrap;">
-{% for student in class.students.all %}
+{% for student in students %}
+{% if student in class.students.all %}
 <div id="{{student.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
 <a href="{% url 'main:student' student.id %}">{{student|title}}</a>
 <br>
@@ -51,6 +61,7 @@
 <button method="POST" type="submit" action="" name="unregister" value="{{student.id}}">Unregister</button>
 </form>
 </div>
+{% endif %}
 {% endfor %}
 </div>
 
@@ -114,11 +125,17 @@
     }
   
     document.addEventListener("DOMContentLoaded", () => {
+
       document.querySelectorAll(".toggler").forEach((el) => {
         el.onclick = (el) => {
           toggleEditSection('create_'+el.target.id);
         };
       });
+
+      document.getElementById("filter").onchange = () => {
+        document.getElementById("filter").submit();
+      };
+
     });
   </script>
 

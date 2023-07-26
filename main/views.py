@@ -128,11 +128,23 @@ def building(request, pk):
 @login_required(login_url="main:login_view")
 def class_view(request, name):
     user = get_object_or_404(User, id=request.user.id)
-    user_class = get_object_or_404(Class, user_id=request.user.id, name=name)
-    teachers = Teacher.objects.filter(user_id=request.user.id)
-    students = Student.objects.filter(user_id=request.user.id)
+    user_class = get_object_or_404(Class, user_id=user.id, name=name)
+    teachers = Teacher.objects.filter(user_id=user.id)
+    subjects = Subject.objects.filter(user_id=request.user.id)
+    students = Student.objects.filter(user_id=user.id)
     teacherForm = TeacherForm()
     studentForm = StudentForm()
+    print(request.GET)
+    student_major = request.GET.get('q') if bool(request.GET.get('q', False)) else None
+    if student_major is not None:
+        try:
+            subject = Subject.objects.get(user_id=user.id, name=student_major)
+            students = Student.objects.filter(user_id=user.id, major=subject)
+            print('hi')
+        except Subject.DoesNotExist:
+            messages.error(request, "Major not found! Please try again.")
+            return redirect('main:class')
+
 
     if request.method == 'POST':
         # register student for class button clicked
@@ -182,6 +194,7 @@ def class_view(request, name):
         'class': user_class,
         'teachers': teachers,
         'students': students,
+        'subjects': subjects,
         'teacherForm': teacherForm,
         'studentForm': studentForm,
     })
