@@ -1,11 +1,17 @@
 from django import forms
-from .models import Subject, Teacher, Student, Class
+from .models import School, Subject, Teacher, Student, Class
+
+class SchoolForm(forms.ModelForm):
+    class Meta:
+        model = School
+        fields = '__all__'
+        exclude = ['user']
 
 class SubjectForm(forms.ModelForm):
     class Meta:
         model = Subject
         fields = '__all__'
-        exclude = ['user']
+        exclude = ['user', 'school']
 
 class TeacherForm(forms.ModelForm):
     class Meta:

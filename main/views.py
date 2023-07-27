@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import SubjectForm, ClassForm, StudentForm, TeacherForm, LoginForm
-from .models import Subject, Class, Student, Teacher
+from .forms import SchoolForm, SubjectForm, ClassForm, StudentForm, TeacherForm, LoginForm
+from .models import School, Subject, Class, Student, Teacher
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
@@ -11,25 +11,36 @@ from django.contrib.auth.decorators import login_required
 
 def home(request):
     user = get_object_or_404(User, id=request.user.id)
-    subjects = Subject.objects.filter(user_id=request.user.id)
-    classes = Class.objects.filter(user_id=request.user.id)
-    teachers = Teacher.objects.filter(user_id=request.user.id)
-    students = Student.objects.filter(user_id=request.user.id)
+    school = get_object_or_404(School, user_id=user.id)
+    subjects = Subject.objects.filter(user_id=user.id)
+    classes = Class.objects.filter(user_id=user.id)
+    teachers = Teacher.objects.filter(user_id=user.id)
+    students = Student.objects.filter(user_id=user.id)
+    schoolForm = SchoolForm(instance=school)
     subjectForm = SubjectForm()
     
     if request.method == 'POST':
-        subjectForm = SubjectForm(request.POST)
-        if subjectForm.is_valid():
-            subject = subjectForm.save(commit=False)
-            subject.user = user
-            subject.save()
+        if 'school_form' in request.POST:
+            schoolForm = SchoolForm(instance=school, data=request.POST)
+            if schoolForm.is_valid:
+                schoolForm.save()
+        elif 'subject_form' in request.POST:
+            subjectForm = SubjectForm(request.POST)
+            if subjectForm.is_valid():
+                subject = subjectForm.save(commit=False)
+                subject.user = user
+                school = School.objects.get(user_id=user.id)
+                subject.school = school
+                subject.save()
 
     return render(request, "main/home.html", {
+        'school': school,
         'subjects': subjects,
         'classes': classes,
         'teachers': teachers,
         'students': students,
-        'form': subjectForm,
+        'schoolForm': schoolForm,
+        'subjectForm': subjectForm,
     })
 
 def login_view(request):
@@ -61,7 +72,7 @@ def register_view(request):
         if form.is_valid():
             form.save()
             username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
+            password = form.cleaned_data['password1']
             user = authenticate(request, username=username, password=password)
             login(request, user)
             messages.success(request, 'Logged in successfully!')

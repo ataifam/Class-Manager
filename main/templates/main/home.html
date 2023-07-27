@@ -4,8 +4,24 @@
 {% block content %}
 
 {% if request.user.is_authenticated %}
+<div id="school-container">
+{% if school %}
+<h1>{{school.name}}</h1>
+<h3>Superintendent: {{school.player_name}}</h3>
 
-
+<div id="start_create_school">
+    <button class="toggler" id="school">Edit</button>
+    </div>
+<div id="create_school" style="display: none">
+<form method="POST" action="">
+{% csrf_token %}
+{{schoolForm}}
+<button name="school_form" type="submit">Submit</button>
+</form>
+<button class="toggler" id="school">Cancel</button>
+</div>
+{% endif %}
+</div>
 
 <div id="subject-container" style="display:flex; flex-direction: row; flex-wrap: wrap;">
     {% for subject in subjects %}
@@ -30,9 +46,9 @@
     <div id="create_subject" style="padding: 5%; margin: 5%; border: 2px solid; display: none">
         <form method="POST" action="">
             {% csrf_token %}
-            {{form}}
+            {{subjectForm}}
             <br>
-            <button type="submit">Submit</button>
+            <button name="subject_form" type="submit">Submit</button>
         </form>
         <button class="toggler" id="subject">Cancel</button>
     </div>

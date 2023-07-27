@@ -1,0 +1,57 @@
+{% for subject in subjects %}
+<div id="{{subject|title}}" style="display:none">
+<h3>Registered {{subject|title}} Students</h3>
+<div id="subject-container" style="display:flex; flex-direction: row; flex-wrap: wrap;">
+{% for student in subject.student_set.all %}
+{% if student in class.students.all %}
+<div id="{{student.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
+<a href="{% url 'main:student' student.id %}">{{student|title}}</a>
+<br>
+    Major: {{student.major}}
+<br>
+<form method="POST" action="">
+{% csrf_token %} 
+<button method="POST" type="submit" action="" name="unregister" value="{{student.id}}">Unregister</button>
+</form>
+</div>
+{% endif %}
+{% endfor %}
+</div>
+
+<hr>
+
+<h3>Unregistered {{subject|title}} Students</h3>
+<div id="subject-container" style="display:flex; flex-direction: row; flex-wrap: wrap;">
+    {% for student in subject.student_set.all %}
+    {% if student not in class.students.all %}
+    <div id="{{student.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
+    <a href="{% url 'main:student' student.id %}">{{student|title}}</a>
+    <br>
+        Major: {{student.major}}
+    <br>
+    <form method="POST" action="" name="registration">
+    {% csrf_token %} 
+    <button type="submit" name="register" value="{{student.id}}">Register</button>
+    </form>
+    </div>
+    {% endif %}
+    {% endfor %}
+    <div id="start_create_student{{subject.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
+        New Student?
+    <button class="toggler" id="student{{subject.id}}">Create</button>
+    </div>
+    <div id="create_student{{subject.id}}" style="padding: 5%; margin: 5%; border: 2px solid; display: none">
+        <form method="POST" action="" name="student_form">
+        {% csrf_token %}
+        <input pattern=".{1,}" required type="text" name="major" value="{{subject}}" list="majorList">
+        <br>
+        {{studentForm}}
+        <br>
+        <button name="student_form" type="submit">Submit</button>
+        </form>
+        <br>
+        <button class="toggler" id="student{{subject.id}}">Cancel</button>
+    </div>
+</div>
+</div>
+{% endfor %}
