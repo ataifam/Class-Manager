@@ -134,16 +134,6 @@ def class_view(request, name):
     students = Student.objects.filter(user_id=user.id)
     teacherForm = TeacherForm()
     studentForm = StudentForm()
-    print(request.GET)
-    student_major = request.GET.get('q') if bool(request.GET.get('q', False)) else None
-    if student_major is not None:
-        try:
-            subject = Subject.objects.get(user_id=user.id, name=student_major)
-            students = Student.objects.filter(user_id=user.id, major=subject)
-            print('hi')
-        except Subject.DoesNotExist:
-            messages.error(request, "Major not found! Please try again.")
-            return redirect('main:class')
 
 
     if request.method == 'POST':
