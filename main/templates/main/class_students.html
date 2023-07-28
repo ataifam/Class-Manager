@@ -1,4 +1,3 @@
-<div id="all" style="display:block">
     <h3>Registered Students</h3>
     <div id="subject-container" style="display:flex; flex-direction: row; flex-wrap: wrap;">
     {% for student in students %}
@@ -40,7 +39,7 @@
         <button class="toggler" id="student">Create</button>
         </div>
         <div id="create_student" style="padding: 5%; margin: 5%; border: 2px solid; display: none">
-            <form method="POST" action="" name="student_form">
+            <form method="POST" action="{% url 'main:create_student' %}">
             {% csrf_token %}
             <input pattern=".{1,}" required type="text" name="major" placeholder="Major" list="majorList">
             <datalist id="majorList">
@@ -58,5 +57,4 @@
             <br>
             <button class="toggler" id="student">Cancel</button>
         </div>
-    </div>
     </div>

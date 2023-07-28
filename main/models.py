@@ -25,7 +25,6 @@ def NewSchool(sender, instance, created, **kwargs):
 class Subject(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, blank=True, null=True)
     name = models.CharField(max_length=60, unique=True)
-    school = models.ForeignKey(School, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return (

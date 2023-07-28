@@ -11,6 +11,9 @@
 
 <div id="start_create_school">
     <button class="toggler" id="school">Edit</button>
+    <a href="{% url 'main:delete' school.id 'school' %}">
+        <button>Start over</button>
+    </a>
     </div>
 <div id="create_school" style="display: none">
 <form method="POST" action="">

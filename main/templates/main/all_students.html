@@ -1,0 +1,88 @@
+{% extends "main/base.html" %}
+{% block title %}Students{% endblock %}
+
+{% block content %}
+
+{% if request.user.is_authenticated %}
+<a href="{% url 'main:home' %}">Go back</a>
+
+<h1><center>Students</center></h1>
+<form action="" id="filter">
+    <select name="q">
+        <option value="all">All</option>
+        {% for subject in subjects %}
+      <option value="{{subject}}">{{subject}}</option>
+      {% endfor %}
+    </select>
+</form>
+
+<div id="student-container" style="display:flex; flex-direction: row;">
+{% for student in students %}
+<div id="{{student.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
+    <a href="{% url 'main:student' student.id %}">{{student|title}}</a>
+    <br>
+        Major: {{student.major}}
+    <br>
+    </div>
+    {% endfor %}
+    <div id="start_create_student" style="padding: 5%; margin: 5%; border: 2px solid">
+        New Student?
+    <button class="toggler" id="student">Create</button>
+    </div>
+    <div id="create_student" style="padding: 5%; margin: 5%; border: 2px solid; display: none">
+        <form method="POST" action="{% url 'main:create_student' %}">
+        {% csrf_token %}
+        {% if filter is None %}
+        <input pattern=".{1,}" required type="text" name="major" placeholder="Major" list="majorList">
+        {% else %}
+        <input pattern=".{1,}" required type="text" value="{{filter}}" name="major" placeholder="Major" list="majorList">
+        {% endif %}
+        <datalist id="majorList">
+            <select id="majors">
+                {% for subject in subjects %}
+                    <option value="{{subject}}">{{subject}}</option>
+                {% endfor %}
+            </select>
+        </datalist>
+        <br>
+        {{form}}
+        <br>
+        <button name="student_form" type="submit">Submit</button>
+        </form>
+        <br>
+        <button class="toggler" id="student">Cancel</button>
+    </div>
+</div>
+</div>
+
+{% endif %}
+
+<script>
+    function toggleEditSection(id) {
+      let category;
+      if ((category = document.getElementById(id)) != null) {
+        if (category.style.display == "none") {
+          category.style.display = "block";
+          document.querySelector("#start_"+id).style.display = "none";
+        } else {
+          category.style.display = "none";
+          document.querySelector("#start_"+id).style.display = "block";
+        }
+      }
+    }
+  
+    document.addEventListener("DOMContentLoaded", () => {
+
+      document.querySelectorAll(".toggler").forEach((el) => {
+        el.onclick = (el) => {
+          toggleEditSection('create_'+el.target.id);
+        };
+      });
+
+      document.querySelector("#filter").onchange = (el) => {
+        document.querySelector("#filter").submit()
+      }
+    });
+  </script>
+
+{% endblock %}

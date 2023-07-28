@@ -35,7 +35,7 @@ Students: {{ class.students.count }}
 </div>
 
 <h3>Edit</h3>
-<form method="POST" action="{% url 'main:student' student.id %}">
+<form method="POST" action="">
 {% csrf_token %}
 <input name="major" placeholder="Major" list="majorList">
         <datalist id="majorList">
