@@ -1,95 +1,101 @@
 {% extends "main/base.html" %}
-{% block title %} {{class}} {% endblock %}
-
+{% block title %}{{class}}{% endblock %}
 {% block content %}
 
 {% if request.user.is_authenticated %}
 <a href="{% url 'main:building' class.building.id %}">Go back</a>
 
 <h1><center>{{class.name|capfirst}}</center></h1>
-<h1><center>{% if class.teacher %}<a href="{% url 'main:teacher' class.teacher.id %}">{{class.teacher|title}}</a>{% else %}None{% endif %}</center></h1>
+<h1>
+  <center>
+    {% if class.teacher %}
+    <a href="{% url 'main:teacher' class.teacher.id %}">{{class.teacher|title}}</a>
+    {% else %}
+    None
+    {% endif %}
+  </center>
+</h1>
 <h3><center>Room {{ class.room }}</center></h3>
-<br>
+<br />
 <h3>Assign?</h3>
-<div id="subject-container" style="display:flex; flex-direction: row; flex-wrap: wrap;">
-{% for teacher in class.building.teacher_set.all %}
-{% if teacher != class.teacher %}
-<div id="{{teacher.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
+<center>
+<div id="subject-container" style="display: flex; flex-direction: row; flex-wrap: wrap">
+  {% for teacher in class.building.teacher_set.all %}
+  {% if teacher != class.teacher %}
+  <div id="{{teacher.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
     {{teacher|title}}
     <form method="POST" action="">
-        {% csrf_token %} 
-        <button type="submit" name="substitute" value="{{teacher.id}}">Substitute</button>
+      {% csrf_token %}
+      <button type="submit" name="substitute" value="{{teacher.id}}">
+        Substitute
+      </button>
     </form>
-</div>
-{% endif %}
-{% endfor %}
-<div id="start_create_teacher" style="padding: 5%; margin: 5%; border: 2px solid">
+  </div>
+  {% endif %}
+  {% endfor %}
+  <div id="start_create_teacher" style="padding: 5%; margin: 5%; border: 2px solid">
     New Teacher?
-<button class="toggler" id="teacher">Create</button>
-</div>
-<div id="create_teacher" style="padding: 5%; margin: 5%; border: 2px solid; display: none">
+    <button class="toggler" id="teacher">Create</button>
+  </div>
+  <div id="create_teacher" style="padding: 5%; margin: 5%; border: 2px solid; display: none">
     {{teacher|title}}
     <form method="POST" action="{% url 'main:create_teacher' class.name %}">
-        {% csrf_token %} 
-        {{teacherForm}}
-        <button name="teacher_form" type="submit">Submit</button>
+      {% csrf_token %} {{teacherForm}}
+      <button name="teacher_form" type="submit">Submit</button>
     </form>
-    <br>
+    <br />
     <button class="toggler" id="teacher">Go back</button>
+  </div>
 </div>
-</div>
-<br>
+<br />
 <form action="" id="filter">
-    <select>
-        <option value="all" selected>All</option>
-        {% for subject in subjects %}
-      <option value="{{subject}}">{{subject}}</option>
-      {% endfor %}
-    </select>
+  <select>
+    <option value="all" selected>All</option>
+    {% for subject in subjects %}
+    <option value="{{subject}}">{{subject}}</option>
+    {% endfor %}
+  </select>
 </form>
-
-<div id="all" style="display:block">
-    {% include 'main/class_students.html'%}
+</center>
+<div id="all" style="display: block">
+  {% include 'main/class_students.html'%}
 </div>
 
 {% for subject in subjects %}
-<div id="{{subject|title}}" style="display:none">
-{% include 'main/class_students_by_major.html' %}
+<div id="{{subject|title}}" style="display: none">
+  {% include 'main/class_students_by_major.html' %}
 </div>
 {% endfor %}
-
 {% endif %}
 
 <script>
-    function toggleEditSection(id) {
-      let category;
-      if ((category = document.getElementById(id)) != null) {
-        if (category.style.display == "none") {
-          category.style.display = "block";
-          document.querySelector("#start_"+id).style.display = "none";
-        } else {
-          category.style.display = "none";
-          document.querySelector("#start_"+id).style.display = "block";
-        }
+  function toggleEditSection(id) {
+    let category;
+    if ((category = document.getElementById(id)) != null) {
+      if (category.style.display == "none") {
+        category.style.display = "block";
+        document.querySelector("#start_" + id).style.display = "none";
+      } else {
+        category.style.display = "none";
+        document.querySelector("#start_" + id).style.display = "block";
       }
     }
-  
-    document.addEventListener("DOMContentLoaded", () => {
+  }
 
-      document.querySelectorAll(".toggler").forEach((el) => {
-        el.onclick = (el) => {
-          toggleEditSection('create_'+el.target.id);
-        };
-      });
-
-      var prev = document.querySelector('#all');
-      document.getElementById("filter").onchange = (el) => {
-        prev.style.display = "none"
-        prev = document.getElementById(el.target.value)
-        prev.style.display = "block";
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".toggler").forEach((el) => {
+      el.onclick = (el) => {
+        toggleEditSection("create_" + el.target.id);
       };
-
     });
-  </script>
+
+    var prev = document.querySelector("#all");
+    document.getElementById("filter").onchange = (el) => {
+      prev.style.display = "none";
+      prev = document.getElementById(el.target.value);
+      prev.style.display = "block";
+    };
+  });
+</script>
 
 {% endblock %}

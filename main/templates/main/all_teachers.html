@@ -1,0 +1,103 @@
+{% extends "main/base.html" %}
+{% block title %}Teachers{% endblock %}
+{% block content %}
+
+{% if request.user.is_authenticated %}
+    <h1><center>Teachers</center></h1>
+    <form action="" id="filter">
+      <select name="filter">
+        <option value="all">All</option>
+        {% for subject in subjects %}
+        <option value="{{subject}}">{{subject}}</option>
+        {% endfor %}
+      </select>
+    </form>
+    
+<center>
+    <div id="teacher-container" style="display: flex; flex-direction: row; flex-wrap: wrap;">
+      {% for teacher in teachers %}
+      <div id="{{teacher.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
+        <a href="{% url 'main:teacher' teacher.id %}">{{teacher|title}}</a>
+        <br />
+        Specialization: {{teacher.subject}}
+        <br />
+        Skill: {{teacher.skill}}
+        <br />
+        Salary: {{teacher.salary}}
+        <br />
+      </div>
+      {% endfor %}
+      <div id="start_create_teacher" style="padding: 5%; margin: 5%; border: 2px solid">
+        New Teacher?
+        <button class="toggler" id="teacher">Create</button>
+      </div>
+      <div id="create_teacher" style="padding: 5%; margin: 5%; border: 2px solid; display: none">
+        <form method="POST" action="{% url 'main:create_teacher' None %}">
+          {% csrf_token %} {% if filter is None %}
+          <input
+            pattern=".{1,}"
+            required
+            type="text"
+            name="major"
+            placeholder="Major"
+            list="majorList"
+          />
+          {% else %}
+          <input
+            pattern=".{1,}"
+            required
+            type="text"
+            value="{{filter}}"
+            name="major"
+            placeholder="Major"
+            list="majorList"
+          />
+          {% endif %}
+          <datalist id="majorList">
+            <select id="majors">
+              {% for subject in subjects %}
+              <option value="{{subject}}">{{subject}}</option>
+              {% endfor %}
+            </select>
+          </datalist>
+          <br />
+          {{form}}
+          <br />
+          <button type="submit">Submit</button>
+        </form>
+        <br />
+        <button class="toggler" id="teacher">Cancel</button>
+      </div>
+    </div>
+</center>  
+{% endif %}
+    
+    <script>
+      function toggleEditSection(id) {
+        let category;
+        if ((category = document.getElementById(id)) != null) {
+          if (category.style.display == "none") {
+            category.style.display = "block";
+            document.querySelector("#start_" + id).style.display = "none";
+          } else {
+            category.style.display = "none";
+            document.querySelector("#start_" + id).style.display = "block";
+          }
+        }
+      }
+    
+      document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".toggler").forEach((el) => {
+          el.onclick = (el) => {
+            toggleEditSection("create_" + el.target.id);
+          };
+        });
+    
+        document.querySelector("#filter").onchange = (el) => {
+          document.querySelector("#filter").submit();
+        };
+      });
+    </script>
+    
+    {% endblock %}
+    

@@ -47,6 +47,25 @@ def home(request):
         'subjectForm': subjectForm,
     })
 
+@login_required(login_url="main:login_view")
+def search(request):
+    user = request.user
+    q = request.GET.get('q') if bool(request.GET.get('q', False)) else None
+    if q is not None:
+            subjects = Subject.objects.filter(user_id=user.id, name__icontains=q)[0:15]
+            classes = Class.objects.filter(user_id=user.id, name__icontains=q)[0:15]
+            teachers = (Teacher.objects.filter(user_id=user.id, first_name__icontains=q) | Teacher.objects.filter(user_id=user.id, last_name__icontains=q))[0:15]
+            students = (Student.objects.filter(user_id=user.id, first_name__icontains=q) | Student.objects.filter(user_id=user.id, last_name__icontains=q))[0:15]
+    else:
+        messages.error(request, "Invalid search entry. Please try again!")
+
+    return render(request, "main/search.html", {
+        'subjects': subjects,
+        'classes': classes,
+        'teachers': teachers,
+        'students': students,
+    })
+
 def login_view(request):
     form = LoginForm()
 
@@ -122,6 +141,7 @@ def delete(request, pk, option):
 @login_required(login_url="main:login_view")
 def building(request, pk):
     user = get_object_or_404(User, id=request.user.id)
+    subjects = Subject.objects.filter(user_id=user.id)
     building = get_object_or_404(Subject, user=user.id, id=pk)
     classForm = ClassForm()
 
@@ -136,6 +156,7 @@ def building(request, pk):
 
     return render(request, "main/building.html", {
         'subject': building,
+        'subjects': subjects,
         'form': classForm,
     })
 
@@ -179,20 +200,46 @@ def class_view(request, name):
 @login_required(login_url="main:login_view")
 def create_teacher(request, name):
     user = request.user
-    user_class = get_object_or_404(Class, user_id=user.id, name=name)
     if request.method == 'POST':
        teacherForm = TeacherForm(request.POST)
        if teacherForm.is_valid():
             teacher = teacherForm.save(commit=False)
             teacher.user = user
-            teacher.subject = user_class.building
+            if name is not None:
+                user_class = get_object_or_404(Class, user_id=user.id, name=name)
+                teacher.subject = user_class.building
+            else:
+                subject = request.POST.get('subject') if bool(request.POST.get('subject', False)) else None
+            if subject is None:
+                messages.error(request, "Subject cannot be blank!")
+                return redirect(request.META.get('HTTP_REFERER', '/'))
+            subject, created = Subject.objects.get_or_create(user_id=user.id, name=subject)
+            teacher.subject = subject
             teacher.save()
             messages.success(request, "Teacher creation successful!")
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
 @login_required(login_url="main:login_view")
 def all_teachers(request):
-    pass
+    user = request.user
+    subjects = Subject.objects.filter(user_id=user.id)
+    teachers = Teacher.objects.filter(user_id=user.id)
+    teacherForm = TeacherForm()
+    filter = request.GET.get('filter') if bool(request.GET.get('filter', False)) else None
+    if filter is not None:
+        try:
+            subject = Subject.objects.get(user_id=user.id, name=filter)
+        except Subject.DoesNotExist:
+            messages.error(request, "Subject cannot be blank!")
+            return redirect('main:all_teachers')
+        teachers = Teacher.objects.filter(user_id=user.id, subject=subject)
+    
+    return render(request, "main/all_teachers.html", {
+        'teachers': teachers,
+        'subjects': subjects,
+        'filter': filter,
+        'form': teacherForm
+    }) 
 
 @login_required(login_url="main:login_view")
 def teacher(request, pk):
@@ -250,10 +297,10 @@ def all_students(request):
     subjects = Subject.objects.filter(user_id=user.id)
     students = Student.objects.filter(user_id=user.id)
     studentForm = StudentForm()
-    q = request.GET.get('q') if bool(request.GET.get('q', False)) else None
-    if q is not None:
+    filter = request.GET.get('filter') if bool(request.GET.get('filter', False)) else None
+    if filter is not None:
         try:
-            major = Subject.objects.get(user_id=user.id, name=q)
+            major = Subject.objects.get(user_id=user.id, name=filter)
         except Subject.DoesNotExist:
             messages.error(request, "Subject cannot be blank!")
             return redirect('main:all_students')
@@ -262,7 +309,7 @@ def all_students(request):
     return render(request, "main/all_students.html", {
         'students': students,
         'subjects': subjects,
-        'filter': q,
+        'filter': filter,
         'form': studentForm
     }) 
 

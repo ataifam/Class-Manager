@@ -1,84 +1,83 @@
 {% extends "main/base.html" %}
-{% block title %} Home {% endblock %}
-
-{% block content %}
+{% block title %}Home{% endblock %}
+{% block content %} 
 
 {% if request.user.is_authenticated %}
+<center>
 <div id="school-container">
-{% if school %}
-<h1>{{school.name}}</h1>
-<h3>Superintendent: {{school.player_name}}</h3>
+  {% if school %}
+  <h1>{{school.name}}</h1>
+  <h3>Superintendent: {{school.player_name}}</h3>
 
-<div id="start_create_school">
+  <div id="start_create_school">
     <button class="toggler" id="school">Edit</button>
     <a href="{% url 'main:delete' school.id 'school' %}">
-        <button>Start over</button>
+      <button>Start over</button>
     </a>
-    </div>
-<div id="create_school" style="display: none">
-<form method="POST" action="">
-{% csrf_token %}
-{{schoolForm}}
-<button name="school_form" type="submit">Submit</button>
-</form>
-<button class="toggler" id="school">Cancel</button>
-</div>
-{% endif %}
+  </div>
+  <div id="create_school" style="display: none">
+    <form method="POST" action="">
+      {% csrf_token %} {{schoolForm}}
+      <button name="school_form" type="submit">Submit</button>
+    </form>
+    <button class="toggler" id="school">Cancel</button>
+  </div>
+  {% endif %}
 </div>
 
-<div id="subject-container" style="display:flex; flex-direction: row; flex-wrap: wrap;">
-    {% for subject in subjects %}
-    {% if subject %}
-        <div id="{{subject.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
-        <a href="{% url 'main:building' subject.id %}">{{subject|capfirst}}</a>
-        <a href="{% url 'main:delete' subject.id 'subject' %}"><button>Delete Subject</button></a>
-        <br>
-        Classes: {{ subject.class_set.count }}
-        <br>
-        Faculty: {{ subject.teacher_set.count }}
-        <br>
-        Students: {{ subject.student_set.count }}
-        </div>
-    {% endif %}
-    {% endfor %}
-    <div id="start_create_subject" style="padding: 5%; margin: 5%; border: 2px solid">
-        New building?
-        <br>
-        <button class="toggler" id="subject">Create</button>
-        </div>
-    <div id="create_subject" style="padding: 5%; margin: 5%; border: 2px solid; display: none">
-        <form method="POST" action="">
-            {% csrf_token %}
-            {{subjectForm}}
-            <br>
-            <button name="subject_form" type="submit">Submit</button>
-        </form>
-        <button class="toggler" id="subject">Cancel</button>
-    </div>
+<div id="subject-container" style="display: flex; flex-direction: row; flex-wrap: wrap">
+  {% for subject in subjects %} {% if subject %}
+  <div id="{{subject.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
+    <a href="{% url 'main:building' subject.id %}">{{subject|capfirst}}</a>
+    <a href="{% url 'main:delete' subject.id 'subject' %}"
+      ><button>Delete Subject</button></a
+    >
+    <br />
+    Classes: {{ subject.class_set.count }}
+    <br />
+    Faculty: {{ subject.teacher_set.count }}
+    <br />
+    Students: {{ subject.student_set.count }}
+  </div>
+  {% endif %} {% endfor %}
+  <div id="start_create_subject" style="padding: 5%; margin: 5%; border: 2px solid">
+    New building?
+    <br />
+    <button class="toggler" id="subject">Create</button>
+  </div>
+  <div id="create_subject" style="padding: 5%; margin: 5%; border: 2px solid; display: none">
+    <form method="POST" action="">
+      {% csrf_token %} {{subjectForm}}
+      <br />
+      <button name="subject_form" type="submit">Submit</button>
+    </form>
+    <button class="toggler" id="subject">Cancel</button>
+  </div>
 </div>
+</center>
 {% endif %}
 
 <script>
-    function toggleEditSection(id) {
-      let category;
-      if ((category = document.getElementById(id)) != null) {
-        if (category.style.display == "none") {
-          category.style.display = "block";
-          document.querySelector("#start_"+id).style.display = "none";
-        } else {
-          category.style.display = "none";
-          document.querySelector("#start_"+id).style.display = "block";
-        }
+  function toggleEditSection(id) {
+    let category;
+    if ((category = document.getElementById(id)) != null) {
+      if (category.style.display == "none") {
+        category.style.display = "block";
+        document.querySelector("#start_" + id).style.display = "none";
+      } else {
+        category.style.display = "none";
+        document.querySelector("#start_" + id).style.display = "block";
       }
     }
-  
-    document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll(".toggler").forEach((el) => {
-        el.onclick = (el) => {
-          toggleEditSection('create_'+el.target.id);
-        };
-      });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".toggler").forEach((el) => {
+      el.onclick = (el) => {
+        toggleEditSection("create_" + el.target.id);
+      };
     });
-  </script>
+  });
+</script>
 
 {% endblock %}

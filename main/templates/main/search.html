@@ -1,0 +1,75 @@
+{% extends "main/base.html" %}
+{% block title %}Search{% endblock %}
+{% block content %} 
+
+{% if request.user.is_authenticated %}
+<center><h3>Results</h3></center>
+{% if subjects %}
+<h4>Subjects</h4>
+<hr>
+{% for subject in subjects %}
+<div id="class-container" style="display: flex; flex-direction: row; flex-wrap: wrap">
+    <div style="padding: 5%; margin: 5%; border: 2px solid">
+        <a href="{% url 'main:building' subject.id %}">{{subject|capfirst}}</a>
+        <br />
+        Classes: {{ subject.class_set.count }}
+        <br />
+        Faculty: {{ subject.teacher_set.count }}
+        <br />
+        Students: {{ subject.student_set.count }}
+  </div>
+</div>
+{% endfor %}
+{% endif %}
+{% if classes %}
+<h4>Classes</h4>
+<hr>
+{% for class in classes %}
+<div id="class-container" style="display: flex; flex-direction: row; flex-wrap: wrap">
+    <div style="padding: 5%; margin: 5%; border: 2px solid">
+        <a href="{% url 'main:class' class.name %}">{{class.name|capfirst}}</a>
+        <br />
+        Faculty: {{ class.teacher }}
+        <br />
+        Room {{ class.room }}
+        <br />
+        Students: {{ class.students.count }}
+  </div>
+</div>
+{% endfor %}
+{% endif %}
+{% if teachers %}
+<h4>Teachers</h4>
+<hr>
+{% for teacher in teachers %}
+<div id="student-container" style="display: flex; flex-direction: row; flex-wrap: wrap">
+    <div style="padding: 5%; margin: 5%; border: 2px solid">
+        <a href="{% url 'main:teacher' teacher.id %}">{{teacher|title}}</a>
+        <br />
+        Specialization: {{teacher.subject}}
+        <br />
+        Skill: {{teacher.skill}}
+        <br />
+        Salary: {{teacher.salary}}
+        <br />
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+{% if students %}
+<h4>Students</h4>
+<hr>
+{% for student in students %}
+<div id="student-container" style="display: flex; flex-direction: row; flex-wrap: wrap">
+<div style="padding: 5%; margin: 5%; border: 2px solid">
+    <a href="{% url 'main:student' student.id %}">{{student|title}}</a>
+    <br />
+    Major: {{student.major}}
+    <br />
+</div>
+</div>
+{% endfor %}
+{% endif %}
+{% endif %}
+
+{% endblock %}

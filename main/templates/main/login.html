@@ -1,13 +1,14 @@
 {% extends "main/base.html" %}
-{% block title %} Login {% endblock %}
+{% block title %}Login{% endblock %}
 
 {% block content %}
 
+<center>
 <form method="POST" action="">
     {% csrf_token %}
     {{form}}
     <button type="submit">Submit</button>
 </form>
-
+</center>
 
 {% endblock %}
