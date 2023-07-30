@@ -1,9 +1,11 @@
 {% extends "main/base.html" %}
 {% block title %}Search{% endblock %}
-{% block content %} 
+{% block content %}
 
 {% if request.user.is_authenticated %}
-<center><h3>Results</h3></center>
+<center>
+    <h3>Results</h3>
+</center>
 {% if subjects %}
 <h4>Subjects</h4>
 <hr>
@@ -17,7 +19,7 @@
         Faculty: {{ subject.teacher_set.count }}
         <br />
         Students: {{ subject.student_set.count }}
-  </div>
+    </div>
 </div>
 {% endfor %}
 {% endif %}
@@ -34,7 +36,7 @@
         Room {{ class.room }}
         <br />
         Students: {{ class.students.count }}
-  </div>
+    </div>
 </div>
 {% endfor %}
 {% endif %}
@@ -61,12 +63,12 @@
 <hr>
 {% for student in students %}
 <div id="student-container" style="display: flex; flex-direction: row; flex-wrap: wrap">
-<div style="padding: 5%; margin: 5%; border: 2px solid">
-    <a href="{% url 'main:student' student.id %}">{{student|title}}</a>
-    <br />
-    Major: {{student.major}}
-    <br />
-</div>
+    <div style="padding: 5%; margin: 5%; border: 2px solid">
+        <a href="{% url 'main:student' student.id %}">{{student|title}}</a>
+        <br />
+        Major: {{student.major}}
+        <br />
+    </div>
 </div>
 {% endfor %}
 {% endif %}

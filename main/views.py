@@ -210,11 +210,11 @@ def create_teacher(request, name):
                 teacher.subject = user_class.building
             else:
                 subject = request.POST.get('subject') if bool(request.POST.get('subject', False)) else None
-            if subject is None:
-                messages.error(request, "Subject cannot be blank!")
-                return redirect(request.META.get('HTTP_REFERER', '/'))
-            subject, created = Subject.objects.get_or_create(user_id=user.id, name=subject)
-            teacher.subject = subject
+                if subject is None:
+                    messages.error(request, "Subject cannot be blank!")
+                    return redirect(request.META.get('HTTP_REFERER', '/'))
+                subject, created = Subject.objects.get_or_create(user_id=user.id, name=subject)
+                teacher.subject = subject
             teacher.save()
             messages.success(request, "Teacher creation successful!")
     return redirect(request.META.get('HTTP_REFERER', '/'))
@@ -317,8 +317,8 @@ def all_students(request):
 def student(request, pk):
     user = request.user
     subjects = Subject.objects.filter(user_id=user.id)
-    student = get_object_or_404(Student, user_id=request.user.id, id=pk)
-    classes = Class.objects.filter(user_id=request.user.id)
+    student = get_object_or_404(Student, user_id=user.id, id=pk)
+    classes = Class.objects.filter(user_id=user.id)
     studentForm = StudentForm(instance=student)
     if request.method == 'POST':
         studentForm = StudentForm(request.POST, instance=student)
@@ -328,7 +328,7 @@ def student(request, pk):
             if major is None:
                 messages.error(request, "Major cannot be blank!")
                 return redirect('main:student', pk)
-            subject, created = Subject.objects.get_or_create(user_id=request.user.id, name=major)
+            subject, created = Subject.objects.get_or_create(user_id=user.id, name=major)
             student.major = subject
             student.save()
             messages.success(request, "Student modification successful!")

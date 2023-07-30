@@ -5,38 +5,65 @@
 {% if request.user.is_authenticated %}
 <a href="{% url 'main:home' %}">Go back</a>
 
-<h1><center>{{subject|capfirst}}</center></h1>
+<h1>
+  <center>{{subject|capfirst}}</center>
+</h1>
 
 <center>
-<div id="subject-container" style="display: flex; flex-direction: row">
-  {% for class in subject.class_set.all %}
-  <div id="{{class.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
-    <a href="{% url 'main:class' class.name %}">{{class.name}}</a>
-    <a href="{% url 'main:delete' class.id 'class' %}">
-      <button>Delete Class</button>
-    </a>
-    <br />
-    Faculty: {{ class.teacher }}
-    <br />
-    Room {{ class.room }}
-    <br />
-    Students: {{ class.students.count }}
+
+  <div id="subject-container" class="container overflow-hidden text-center">
+    <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+      {% for class in subject.class_set.all %}
+      <div class="col-2">
+        <div id="{{class.id}}" class="card mb-3" style="max-width: 18rem;">
+          <div class="card-header">
+            <h5><a href="{% url 'main:class' class.name %}">{{class|capfirst}}</a></h5>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">
+              Faculty: {{ class.teacher }}
+              <br />
+              Room {{ class.room }}
+              <br />
+              Students: {{ class.students.count }}
+            </h5>
+            <a href="{% url 'main:delete' class.id 'class' %}">
+              <button>Delete Class</button>
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      <div id="start_create_class" class="col-2">
+        <div class="card mb-3" style="max-width: 18rem">
+          <div class="card-header">
+            <h5>New Class?</h5>
+          </div>
+          <div class="card-body">
+            <button class="toggler card-title" id="class">Create</button>
+          </div>
+        </div>
+      </div>
+      <div id="create_class" class="col-2" style="display: none;">
+        <div class="card mb-3" style="max-width: 18rem">
+          <div class="card-header">
+            <h5>Create Class</h5>
+          </div>
+          <div class="card-body">
+            <div class="card-title">
+              <form method="POST" action="">
+                {% csrf_token %} {{form}}
+                <br />
+                <br />
+                <button type="submit">Submit</button>
+                <button class="toggler" id="class">Cancel</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  {% endfor %}
-  <div id="start_create_class" style="padding: 5%; margin: 5%; border: 2px solid">
-    New class?
-    <br />
-    <button class="toggler" id="class">Create</button>
-  </div>
-  <div id="create_class" style="padding: 5%; margin: 5%; border: 2px solid; display: none">
-    <form method="POST" action="">
-      {% csrf_token %} {{form}}
-      <br />
-      <button type="submit">Submit</button>
-    </form>
-    <button class="toggler" id="class">Cancel</button>
-  </div>
-</div>
 </center>
 
 {% endif %}

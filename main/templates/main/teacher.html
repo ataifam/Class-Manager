@@ -5,52 +5,54 @@
 {% if request.user.is_authenticated %}
 <a href="{% url 'main:home' %}">Go Home</a>
 
-<h1><center>{{teacher|title}}</center></h1>
+<h1>
+  <center>{{teacher|title}}</center>
+</h1>
 
 <a href="{% url 'main:delete' teacher.id 'teacher' %}">
-    <button>Delete Teacher</button>
+  <button>Delete Teacher</button>
 </a>
 <center>
-<br />
-Specialization: {{teacher.subject}}
-<br />
-Skill: {{teacher.skill}}
-<br />
-Salary: {{teacher.salary}}
-<br />
+  <br />
+  Specialization: {{teacher.subject}}
+  <br />
+  Skill: {{teacher.skill}}
+  <br />
+  Salary: {{teacher.salary}}
+  <br />
 </center>
 
 <h3>Classes</h3>
 <center>
-<div id="subject-container" style="display: flex; flex-direction: row">
-  {% for class in classes %}
-  <div id="{{class.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
-    <a href="{% url 'main:class' class %}">{{class}}</a>
-    <br />
-    Room {{class.room}}
-    <br />
-    Students: {{ class.students.count }}
-    <br />
+  <div id="subject-container" style="display: flex; flex-direction: row">
+    {% for class in classes %}
+    <div id="{{class.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
+      <a href="{% url 'main:class' class %}">{{class}}</a>
+      <br />
+      Room {{class.room}}
+      <br />
+      Students: {{ class.students.count }}
+      <br />
+    </div>
+    {% endfor %}
   </div>
-  {% endfor %}
-</div>
 </center>
 
 <h3>Edit</h3>
 <center>
-<form method="POST" action="">
-  {% csrf_token %}
-  <input name="subject" placeholder="Subject" list="subjectList" />
-  <datalist id="subjectList">
-    <select id="subjects">
-      {% for subject in subjects %}
-      <option value="{{subject}}">{{subject}}</option>
-      {% endfor %}
-    </select></datalist>
+  <form method="POST" action="">
+    {% csrf_token %}
+    <input name="subject" placeholder="Subject" list="subjectList" />
+    <datalist id="subjectList">
+      <select id="subjects">
+        {% for subject in subjects %}
+        <option value="{{subject}}">{{subject}}</option>
+        {% endfor %}
+      </select></datalist>
     <br />
-  {{form}}
-  <button type="Submit">Submit</button>
-</form>
+    {{form}}
+    <button type="Submit">Submit</button>
+  </form>
 </center>
 
 {% endif %} {% endblock %}

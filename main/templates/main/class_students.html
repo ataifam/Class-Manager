@@ -1,77 +1,102 @@
-<h3>Registered Students</h3>
-<div id="subject-container" style="display: flex; flex-direction: row; flex-wrap: wrap">
-  {% for student in students %}
-  {% if student in class.students.all %}
-  <div id="{{student.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
-    <a href="{% url 'main:student' student.id %}">{{student|title}}</a>
-    <br />
-    Major: {{student.major}}
-    <br />
-    <form method="POST" action="">
-      {% csrf_token %}
-      <button
-        method="POST"
-        type="submit"
-        action=""
-        name="unregister"
-        value="{{student.id}}"
-      >
-        Unregister
-      </button>
-    </form>
-  </div>
-  {% endif %}
-  {% endfor %}
-</div>
+<center>
+  <h5>Registered Students</h5>
+</center>
 
-<hr />
+<div id="student-all-container" class="container overflow-hidden text-center">
+  <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+    {% for student in students %}
+    {% if student in class.students.all %}
+    <div class="col-2">
+      <div id="{{student.id}}" class="card mb-3" style="max-width: 18rem;">
+        <div class="card-header">
+          <h5><a href="{% url 'main:student' student.id %}">{{student|title}}</a></h5>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">
+            Major: {{student.major}}
+          </h5>
+          <br>
+          <form method="POST" action="">
+            {% csrf_token %}
+            <button method="POST" type="submit" action="" name="unregister" value="{{student.id}}">
+              Unregister
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
 
-<h3>Unregistered Students</h3>
-<div id="subject-container" style="display: flex; flex-direction: row; flex-wrap: wrap">
-  {% for student in students %}
-  {% if student not in class.students.all %}
-  <div id="{{student.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
-    <a href="{% url 'main:student' student.id %}">{{student|title}}</a>
-    <br />
-    Major: {{student.major}}
-    <br />
-    <form method="POST" action="" name="registration">
-      {% csrf_token %}
-      <button type="submit" name="register" value="{{student.id}}">
-        Register
-      </button>
-    </form>
-  </div>
-  {% endif %}
-  {% endfor %}
-  <div id="start_create_student" style="padding: 5%; margin: 5%; border: 2px solid">
-    New Student?
-    <button class="toggler" id="student">Create</button>
-  </div>
-  <div id="create_student" style="padding: 5%; margin: 5%; border: 2px solid; display: none">
-    <form method="POST" action="{% url 'main:create_student' %}">
-      {% csrf_token %}
-      <input
-        pattern=".{1,}"
-        required
-        type="text"
-        name="major"
-        placeholder="Major"
-        list="majorList"
-      />
-      <datalist id="majorList">
-        <select id="majors">
-          {% for subject in subjects %}
-          <option value="{{subject}}">{{subject}}</option>
-          {% endfor %}
-        </select>
-      </datalist>
-      <br />
-      {{studentForm}}
-      <br />
-      <button name="student_form" type="submit">Submit</button>
-    </form>
-    <br />
-    <button class="toggler" id="student">Cancel</button>
+  <hr />
+
+  <center>
+    <h5>Unregistered Students</h5>
+  </center>
+  <div id="student-all-container2" class="container overflow-hidden text-center">
+    <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+      {% for student in students %}
+      {% if student not in class.students.all %}
+      <div class="col-2">
+        <div id="{{student.id}}" class="card mb-3" style="max-width: 18rem;">
+          <div class="card-header">
+            <h5><a href="{% url 'main:student' student.id %}">{{student|title}}</a></h5>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">
+              Major: {{student.major}}
+            </h5>
+            <br>
+            <form method="POST" action="" name="registration">
+              {% csrf_token %}
+              <button type="submit" name="register" value="{{student.id}}">
+                Register
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+      <div id="start_create_student" class="col-2">
+        <div class="card mb-3" style="max-width: 18rem">
+          <div class="card-header">
+            <h5>New Student?</h5>
+          </div>
+          <div class="card-body">
+            <button class="toggler card-title" id="student">Create</button>
+          </div>
+        </div>
+      </div>
+      <div id="create_student" class="col-2" style="display: none;">
+        <div class="card mb-3" style="max-width: 18rem">
+          <div class="card-header">
+            <h5>Create Student</h5>
+          </div>
+          <div class="card-body">
+            <div class="card-title">
+              <form method="POST" action="{% url 'main:create_student' %}">
+                {% csrf_token %}
+                <input pattern=".{1,}" required type="text" name="major" placeholder="Major" list="majorList" />
+                <datalist id="majorList">
+                  <select id="majors">
+                    {% for subject in subjects %}
+                    <option value="{{subject}}">{{subject}}</option>
+                    {% endfor %}
+                  </select>
+                </datalist>
+                <br />
+                {{studentForm}}
+                <br />
+                <br />
+                <button name="student_form" type="submit">Submit</button>
+                <button class="toggler" id="student">Cancel</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
