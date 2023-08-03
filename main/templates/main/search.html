@@ -9,68 +9,121 @@
 {% if subjects %}
 <h4>Subjects</h4>
 <hr>
-{% for subject in subjects %}
-<div id="class-container" style="display: flex; flex-direction: row; flex-wrap: wrap">
-    <div style="padding: 5%; margin: 5%; border: 2px solid">
-        <a href="{% url 'main:building' subject.id %}">{{subject|capfirst}}</a>
-        <br />
-        Classes: {{ subject.class_set.count }}
-        <br />
-        Faculty: {{ subject.teacher_set.count }}
-        <br />
-        Students: {{ subject.student_set.count }}
+<div id="subject-container" class="container overflow-hidden text-center">
+    <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+        {% for subject in subjects %}
+        <div class="col-2">
+            <div id="{{subject.id}}" class="card mb-3" style="max-width: 18rem;">
+                <div class="card-header">
+                    <h5><a href="{% url 'main:building' subject.id %}">{{subject|capfirst}}</a></h5>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">
+                        Classes: {{ subject.class_set.count }}
+                        <br />
+                        Faculty: {{ subject.teacher_set.count }}
+                        <br />
+                        Students: {{ subject.student_set.count }}
+                    </h5>
+                    <br>
+                    <a href="{% url 'main:delete' subject.id 'subject' %}">
+                        <button>Delete Subject</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 </div>
-{% endfor %}
 {% endif %}
 {% if classes %}
 <h4>Classes</h4>
 <hr>
-{% for class in classes %}
-<div id="class-container" style="display: flex; flex-direction: row; flex-wrap: wrap">
-    <div style="padding: 5%; margin: 5%; border: 2px solid">
-        <a href="{% url 'main:class' class.name %}">{{class.name|capfirst}}</a>
-        <br />
-        Faculty: {{ class.teacher }}
-        <br />
-        Room {{ class.room }}
-        <br />
-        Students: {{ class.students.count }}
+<div id="class-container" class="container overflow-hidden text-center">
+    <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+        {% for class in classes %}
+        <div class="col-2">
+            <div id="{{class.id}}" class="card mb-3" style="max-width: 18rem;">
+                <div class="card-header">
+                    <h5><a href="{% url 'main:class' class.name %}">{{class.name|capfirst}}</a></h5>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">
+                        Faculty: <a href="{% url 'main:teacher' class.teacher.id %}">{{ class.teacher }}</a>
+                        <br />
+                        Room {{ class.room }}
+                        <br />
+                        Students: {{ class.students.count }}
+                    </h5>
+                    <br>
+                    <a href="{% url 'main:delete' class.id 'class' %}">
+                        <button>Delete Class</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 </div>
-{% endfor %}
 {% endif %}
 {% if teachers %}
 <h4>Teachers</h4>
 <hr>
-{% for teacher in teachers %}
-<div id="student-container" style="display: flex; flex-direction: row; flex-wrap: wrap">
-    <div style="padding: 5%; margin: 5%; border: 2px solid">
-        <a href="{% url 'main:teacher' teacher.id %}">{{teacher|title}}</a>
-        <br />
-        Specialization: {{teacher.subject}}
-        <br />
-        Skill: {{teacher.skill}}
-        <br />
-        Salary: {{teacher.salary}}
-        <br />
+<div id="teacher-container" class="container overflow-hidden text-center">
+    <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+        {% for teacher in teachers %}
+        <div class="col-2">
+            <div id="{{teacher.id}}" class="card mb-3" style="max-width: 18rem;">
+                <div class="card-header">
+                    <h5><a href="{% url 'main:teacher' teacher.id %}">{{teacher|title}}</a></h5>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">
+                        Specialization: {{teacher.subject}}
+                        <br />
+                        Skill: {{teacher.skill}}
+                        <br />
+                        Salary: {{teacher.salary}}
+                    </h5>
+                    <br>
+                    <a href="{% url 'main:delete' teacher.id 'teacher' %}">
+                        <button>Delete Teacher</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 </div>
-{% endfor %}
 {% endif %}
+
 {% if students %}
 <h4>Students</h4>
 <hr>
-{% for student in students %}
-<div id="student-container" style="display: flex; flex-direction: row; flex-wrap: wrap">
-    <div style="padding: 5%; margin: 5%; border: 2px solid">
-        <a href="{% url 'main:student' student.id %}">{{student|title}}</a>
-        <br />
-        Major: {{student.major}}
-        <br />
+<div id="student-container" class="container overflow-hidden text-center">
+    <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+        {% for student in students %}
+        <div class="col-2">
+            <div id="{{teacher.id}}" class="card mb-3" style="max-width: 18rem;">
+                <div class="card-header">
+                    <h5><a href="{% url 'main:student' student.id %}">{{student|title}}</a></h5>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">
+                        Major: {{student.major}}
+                        <br />
+                        Year: {{student.year}}
+                    </h5>
+                    <br>
+                    <a href="{% url 'main:delete' student.id 'student' %}">
+                        <button>Delete Class</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 </div>
-{% endfor %}
 {% endif %}
 {% endif %}
 

@@ -14,50 +14,77 @@
     {% endfor %}
   </select>
 </form>
+<br>
 
-<center>
-  <div id="teacher-container" style="display: flex; flex-direction: row; flex-wrap: wrap;">
+<div id="teacher-container" class="container overflow-hidden text-center">
+  <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
     {% for teacher in teachers %}
-    <div id="{{teacher.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
-      <a href="{% url 'main:teacher' teacher.id %}">{{teacher|title}}</a>
-      <br />
-      Specialization: {{teacher.subject}}
-      <br />
-      Skill: {{teacher.skill}}
-      <br />
-      Salary: {{teacher.salary}}
-      <br />
+    <div class="col-2">
+      <div id="{{teacher.id}}" class="card mb-3" style="max-width: 18rem;">
+        <div class="card-header">
+          <h5><a href="{% url 'main:teacher' teacher.id %}">{{teacher|title}}</a></h5>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">
+            Specialization: {{teacher.subject}}
+            <br />
+            Skill: {{teacher.skill}}
+            <br />
+            Salary: {{teacher.salary}}
+          </h5>
+          <br>
+          <a href="{% url 'main:delete' teacher.id 'teacher' %}">
+            <button>Delete Teacher</button>
+          </a>
+        </div>
+      </div>
     </div>
     {% endfor %}
-    <div id="start_create_teacher" style="padding: 5%; margin: 5%; border: 2px solid">
-      New Teacher?
-      <button class="toggler" id="teacher">Create</button>
+    <div id="start_create_teacher" class="col-2">
+      <div class="card mb-3" style="max-width: 18rem">
+        <div class="card-header">
+          New Teacher?
+        </div>
+        <div class="card-body">
+          <button class="toggler" id="teacher">Create</button>
+        </div>
+      </div>
     </div>
-    <div id="create_teacher" style="padding: 5%; margin: 5%; border: 2px solid; display: none">
-      <form method="POST" action="{% url 'main:create_teacher' None %}">
-        {% csrf_token %} {% if filter is None %}
-        <input pattern=".{1,}" required type="text" name="major" placeholder="Major" list="majorList" />
-        {% else %}
-        <input pattern=".{1,}" required type="text" value="{{filter}}" name="major" placeholder="Major"
-          list="majorList" />
-        {% endif %}
-        <datalist id="majorList">
-          <select id="majors">
-            {% for subject in subjects %}
-            <option value="{{subject}}">{{subject}}</option>
-            {% endfor %}
-          </select>
-        </datalist>
-        <br />
-        {{form}}
-        <br />
-        <button type="submit">Submit</button>
-      </form>
-      <br />
-      <button class="toggler" id="teacher">Cancel</button>
+    <div id="create_teacher" class="col-2" style="display: none;">
+      <div class="card mb-3" style="max-width: 18rem">
+        <div class="card-header">
+          <h5>Create Teacher</h5>
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <form method="POST" action="{% url 'main:create_teacher' None %}">
+              {% csrf_token %} {% if filter is None %}
+              <input pattern=".{1,}" required type="text" name="major" placeholder="Major" list="majorList" />
+              {% else %}
+              <input pattern=".{1,}" required type="text" value="{{filter}}" name="major" placeholder="Major"
+                list="majorList" />
+              {% endif %}
+              <datalist id="majorList">
+                <select id="majors">
+                  {% for subject in subjects %}
+                  <option value="{{subject}}">{{subject}}</option>
+                  {% endfor %}
+                </select>
+              </datalist>
+              <br />
+              {{form}}
+              <br />
+              <br />
+              <button type="submit">Submit</button>
+              <button class="toggler" id="teacher">Cancel</button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</center>
+</div>
+
 {% endif %}
 
 <script>

@@ -8,51 +8,75 @@
 <h1>
   <center>{{teacher|title}}</center>
 </h1>
+<br>
+<div class="container text-center">
+  <div class="row g-2">
+    <div class="col-6">
+      Specialization: {{teacher.subject}}
+      <br />
+      Skill: {{teacher.skill}}
+      <br />
+      Salary: ${{teacher.salary}}
+    </div>
+    <div class="col-6">
+      <a href="{% url 'main:delete' teacher.id 'teacher' %}">
+        <button>Delete Teacher</button>
+      </a>
+    </div>
+  </div>
+</div>
+<br />
 
-<a href="{% url 'main:delete' teacher.id 'teacher' %}">
-  <button>Delete Teacher</button>
-</a>
-<center>
-  <br />
-  Specialization: {{teacher.subject}}
-  <br />
-  Skill: {{teacher.skill}}
-  <br />
-  Salary: {{teacher.salary}}
-  <br />
-</center>
 
 <h3>Classes</h3>
-<center>
-  <div id="subject-container" style="display: flex; flex-direction: row">
+<hr>
+<div id="class-container" class="container overflow-hidden text-center">
+  <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
     {% for class in classes %}
-    <div id="{{class.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
-      <a href="{% url 'main:class' class %}">{{class}}</a>
-      <br />
-      Room {{class.room}}
-      <br />
-      Students: {{ class.students.count }}
-      <br />
+    <div class="col-2">
+      <div id="{{class.id}}" class="card mb-3" style="max-width: 18rem;">
+        <div class="card-header">
+          <h5><a href="{% url 'main:class' class %}">{{class|capfirst}}</a></h5>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">
+            Room {{ class.room }}
+            <br />
+            Students: {{ class.students.count }}
+          </h5>
+        </div>
+      </div>
     </div>
     {% endfor %}
   </div>
-</center>
+</div>
 
 <h3>Edit</h3>
-<center>
-  <form method="POST" action="">
-    {% csrf_token %}
-    <input name="subject" placeholder="Subject" list="subjectList" />
-    <datalist id="subjectList">
-      <select id="subjects">
-        {% for subject in subjects %}
-        <option value="{{subject}}">{{subject}}</option>
-        {% endfor %}
-      </select></datalist>
-    <br />
-    {{form}}
-    <button type="Submit">Submit</button>
-  </form>
-</center>
+<hr>
+<div id="teacher-container" class="container overflow-hidden text-center">
+  <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+    <div id="edit_teacher" class="col-2">
+      <div class="card mb-3" style="width: 88vw;">
+        <div class="card-header">
+          <form method="POST" action="">
+            {% csrf_token %}
+            <input name="subject" placeholder="Subject" list="subjectList" />
+            <datalist id="subjectList">
+              <select id="subjects">
+                {% for subject in subjects %}
+                <option value="{{subject}}">{{subject}}</option>
+                {% endfor %}
+              </select></datalist>
+            <br />
+            {{form}}
+            <br>
+            <br>
+            <button type="Submit">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endif %} {% endblock %}

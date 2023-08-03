@@ -8,51 +8,75 @@
 <h1>
   <center>{{student|title}}</center>
 </h1>
-
-<a href="{% url 'main:delete' student.id 'student' %}">
-  <button>Delete Student</button>
-</a>
-
-<br />
-Major: {{student.major}}
-<br />
-Year: {{student.year}}
-<br />
-Average Grade: {{student.average_grade}}
+<br>
+<div class="container text-center">
+  <div class="row g-2">
+    <div class="col-6">
+      Major: {{student.major}}
+      <br />
+      Year: {{student.year}}
+      <br />
+      Average Grade: {{student.average_grade}}
+    </div>
+    <div class="col-6">
+      <a href="{% url 'main:delete' student.id 'student' %}">
+        <button>Delete Student</button>
+      </a>
+    </div>
+  </div>
+</div>
 <br />
 
 <h3>Classes</h3>
-<center>
-  <div id="subject-container" style="display: flex; flex-direction: row; flex-wrap: wrap">
+<hr>
+<div id="class-container" class="container overflow-hidden text-center">
+  <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
     {% for class in classes %} {% if student in class.students.all %}
-    <div id="{{class.id}}" style="padding: 5%; margin: 5%; border: 2px solid">
-      <a href="{% url 'main:class' class %}">{{class}}</a>
-      <br />
-      Instructor: {{class.teacher}}
-      <br />
-      Room {{class.room}}
-      <br />
-      Students: {{ class.students.count }}
-      <br />
+    <div class="col-2">
+      <div id="{{class.id}}" class="card mb-3" style="max-width: 18rem;">
+        <div class="card-header">
+          <h5><a href="{% url 'main:class' class.name %}">{{class|capfirst}}</a></h5>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">
+            Faculty: <a href="{% url 'main:teacher' class.teacher.id %}">{{ class.teacher }}</a>
+            <br />
+            Room {{ class.room }}
+            <br />
+            Students: {{ class.students.count }}
+          </h5>
+        </div>
+      </div>
     </div>
     {% endif %} {% endfor %}
-</center>
+  </div>
 </div>
 
 <h3>Edit</h3>
-<center>
-  <form method="POST" action="">
-    {% csrf_token %}
-    <input name="major" placeholder="Major" list="majorList" />
-    <datalist id="majorList">
-      <select id="majors">
-        {% for subject in subjects %}
-        <option value="{{subject}}">{{subject}}</option>
-        {% endfor %}
-      </select></datalist><br />
-    {{form}}
-    <button type="Submit">Submit</button>
-  </form>
-</center>
+<hr>
+<div id="student-container" class="container overflow-hidden text-center">
+  <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+    <div id="edit_student" class="col-2">
+      <div class="card mb-3" style="width: 88vw;">
+        <div class="card-header">
+          <form method="POST" action="">
+            {% csrf_token %}
+            <input name="major" placeholder="Major" list="majorList" />
+            <datalist id="majorList">
+              <select id="majors">
+                {% for subject in subjects %}
+                <option value="{{subject}}">{{subject}}</option>
+                {% endfor %}
+              </select></datalist><br />
+            {{form}}
+            <br>
+            <br>
+            <button type="Submit">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endif %} {% endblock %}
