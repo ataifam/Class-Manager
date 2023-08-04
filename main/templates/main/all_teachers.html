@@ -34,7 +34,7 @@
           </h5>
           <br>
           <a href="{% url 'main:delete' teacher.id 'teacher' %}">
-            <button>Delete Teacher</button>
+            <button type="button" class="btn btn-outline-danger">Delete Teacher</button>
           </a>
         </div>
       </div>
@@ -46,7 +46,7 @@
           New Teacher?
         </div>
         <div class="card-body">
-          <button class="toggler" id="teacher">Create</button>
+          <button class="toggler btn btn-outline-primary" id="teacher">Create</button>
         </div>
       </div>
     </div>
@@ -75,8 +75,8 @@
               {{form}}
               <br />
               <br />
-              <button type="submit">Submit</button>
-              <button class="toggler" id="teacher">Cancel</button>
+              <button class="btn btn-outline-success" type="submit">Submit</button>
+              <button class="toggler btn btn-outline-danger" id="teacher">Cancel</button>
             </form>
           </div>
         </div>

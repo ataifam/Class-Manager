@@ -47,12 +47,14 @@
         </div>
         <div class="card-body">
           <h5 class="card-title">
+            {{student.getYear}}
+      <br />
             Major: {{student.major}}
           </h5>
           <br>
           <form method="POST" action="" name="registration">
             {% csrf_token %}
-            <button type="submit" name="register" value="{{student.id}}">
+            <button class="btn btn-outline-primary" type="submit" name="register" value="{{student.id}}">
               Register
             </button>
           </form>
@@ -67,7 +69,7 @@
           <h5>New Student?</h5>
         </div>
         <div class="card-body">
-          <button class="toggler card-title" id="student{{subject.id}}">Create</button>
+          <button class="toggler card-title btn btn-outline-primary" id="student{{subject.id}}">Create</button>
         </div>
       </div>
     </div>
@@ -85,8 +87,8 @@
               {{studentForm}}
               <br />
               <br />
-              <button name="student_form" type="submit">Submit</button>
-              <button class="toggler" id="student{{subject.id}}">Cancel</button>
+              <button class="btn btn-outline-success" name="student_form" type="submit">Submit</button>
+              <button class="toggler btn btn-outline-danger" id="student{{subject.id}}">Cancel</button>
             </form>
           </div>
         </div>

@@ -27,7 +27,7 @@
                     </h5>
                     <br>
                     <a href="{% url 'main:delete' subject.id 'subject' %}">
-                        <button>Delete Subject</button>
+                        <button type="button" class="btn btn-outline-danger">Delete Subject</button>
                     </a>
                 </div>
             </div>
@@ -57,7 +57,7 @@
                     </h5>
                     <br>
                     <a href="{% url 'main:delete' class.id 'class' %}">
-                        <button>Delete Class</button>
+                        <button type="button" class="btn btn-outline-danger">Delete Class</button>
                     </a>
                 </div>
             </div>
@@ -87,7 +87,7 @@
                     </h5>
                     <br>
                     <a href="{% url 'main:delete' teacher.id 'teacher' %}">
-                        <button>Delete Teacher</button>
+                        <button type="button" class="btn btn-outline-danger">Delete Teacher</button>
                     </a>
                 </div>
             </div>
@@ -110,13 +110,13 @@
                 </div>
                 <div class="card-body">
                     <h5 class="card-title">
+                        {{student.getYear}}
+                        <br>
                         Major: {{student.major}}
-                        <br />
-                        Year: {{student.year}}
                     </h5>
                     <br>
                     <a href="{% url 'main:delete' student.id 'student' %}">
-                        <button>Delete Class</button>
+                        <button type="button" class="btn btn-outline-danger">Delete Class</button>
                     </a>
                 </div>
             </div>

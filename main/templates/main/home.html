@@ -14,17 +14,17 @@
         <h5>Superintendent: {{school.player_name}}</h5>
 
         <div id="start_create_school">
-          <button class="toggler" id="school">Edit</button>
+          <button class="toggler btn btn-outline-primary" id="school">Edit</button>
           <a href="{% url 'main:delete' school.id 'school' %}">
-            <button>Start over</button>
+            <button type="button" class="btn btn-outline-danger">Start over</button>
           </a>
         </div>
         <div id="create_school" style="display: none">
           <form method="POST" action="">
             {% csrf_token %} {{schoolForm}}
-            <button name="school_form" type="submit">Submit</button>
+            <button name="school_form" class="btn btn-outline-success" type="submit">Submit</button>
           </form>
-          <button class="toggler" id="school">Cancel</button>
+          <button class="toggler btn btn-outline-danger" id="school">Cancel</button>
         </div>
         {% endif %}
       </div>
@@ -43,20 +43,19 @@
       {% for subject in subjects %} {% if subject %}
       <div class="col-2">
         <div id="{{subject.id}}" class="card mb-3" style="max-width: 18rem;">
-          <div class="card-header">
-            <h5><a href="{% url 'main:building' subject.id %}">{{subject|capfirst}}</a></h5>
+          <div class="card-header bg-primary">
+            <h5><a class="title-header link-dark bg-primary fw-medium" href="{% url 'main:building' subject.id %}">{{subject|capfirst}} <i class="bi bi-arrow-up-right-circle"></i></a></h5>
           </div>
           <div class="card-body">
             <h5 class="card-title">
-              Classes: {{ subject.class_set.count }}
+              <span class="m-1 badge bg-dark">Classes <span class="badge bg-secondary"> {{ subject.class_set.count }}</span></span>
               <br />
-              Faculty: {{ subject.teacher_set.count }}
+              <span class="m-1 badge bg-dark">Faculty <span class="badge bg-secondary"> {{ subject.teacher_set.count }}</span></span>
               <br />
-              Students: {{ subject.student_set.count }}
+              <span class="m-1 badge bg-dark">Students <span class="badge bg-secondary"> {{ subject.student_set.count }}</span></span>
             </h5>
-            <br>
             <a href="{% url 'main:delete' subject.id 'subject' %}">
-              <button>Delete Subject</button>
+              <button type="button" class="btn btn-outline-danger">Delete Subject</button>
             </a>
           </div>
         </div>
@@ -64,11 +63,11 @@
       {% endif %} {% endfor %}
       <div id="start_create_subject" class="col-2">
         <div class="card mb-3" style="max-width: 18rem">
-          <div class="card-header">
-            <h5>New Building?</h5>
+          <div class="card-header bg-primary">
+            <h5 class="text-dark bg-primary fw-medium">New Building?</h5>
           </div>
           <div class="card-body">
-            <button class="toggler card-title" id="subject">Create</button>
+            <button class="toggler card-title btn btn-outline-primary" id="subject">Create</button>
           </div>
         </div>
       </div>
@@ -83,8 +82,8 @@
                 {% csrf_token %} {{subjectForm}}
                 <br />
                 <br>
-                <button name="subject_form" type="submit">Submit</button>
-                <button class="toggler" id="subject">Cancel</button>
+                <button name="subject_form" class="btn btn-outline-success" type="submit">Submit</button>
+                <button class="toggler btn btn-outline-danger" id="subject">Cancel</button>
               </form>
             </div>
           </div>

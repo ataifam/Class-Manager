@@ -26,13 +26,15 @@
         </div>
         <div class="card-body">
           <h5 class="card-title">
+            {{student.getYear}}
+      <br />
             Major: {{student.major}}
             <br />
-            Year: {{student.year}}
+            Average Grade: {{student.average_grade}}
           </h5>
           <br>
           <a href="{% url 'main:delete' student.id 'student' %}">
-            <button>Delete Student</button>
+            <button type="button" class="btn btn-outline-danger">Delete Student</button>
           </a>
         </div>
       </div>
@@ -44,7 +46,7 @@
           New Student?
         </div>
         <div class="card-body">
-          <button class="toggler" id="student">Create</button>
+          <button class="toggler btn btn-outline-primary" id="student">Create</button>
         </div>
       </div>
     </div>
@@ -73,8 +75,8 @@
               {{form}}
               <br />
               <br />
-              <button name="student_form" type="submit">Submit</button>
-              <button class="toggler" id="student">Cancel</button>
+              <button class="btn btn-outline-success" name="student_form" type="submit">Submit</button>
+              <button class="toggler btn btn-outline-danger" id="student">Cancel</button>
             </form>
           </div>
         </div>

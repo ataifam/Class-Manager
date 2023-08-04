@@ -20,7 +20,7 @@
     </div>
     <div class="col-6">
       <a href="{% url 'main:delete' teacher.id 'teacher' %}">
-        <button>Delete Teacher</button>
+        <button type="button" class="btn btn-outline-danger">Delete Teacher</button>
       </a>
     </div>
   </div>
@@ -71,7 +71,7 @@
             {{form}}
             <br>
             <br>
-            <button type="Submit">Submit</button>
+            <button class="btn btn-outline-success" type="Submit">Submit</button>
           </form>
         </div>
       </div>

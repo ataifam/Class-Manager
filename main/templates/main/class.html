@@ -29,7 +29,7 @@
 
 
 <h3 class="d-inline-flex gap-1">
-  <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample"
+  <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample"
     aria-expanded="false" aria-controls="collapseWidthExample">
     Assignment
   </button>
@@ -61,7 +61,7 @@
                     <br>
                     <form method="POST" action="">
                       {% csrf_token %}
-                      <button type="submit" name="substitute" value="{{teacher.id}}">
+                      <button class="btn btn-outline-primary" type="submit" name="substitute" value="{{teacher.id}}">
                         Substitute
                       </button>
                     </form>
@@ -77,7 +77,7 @@
                   <h5>New Teacher?</h5>
                 </div>
                 <div class="card-body">
-                  <button class="toggler card-title" id="teacher">Create</button>
+                  <button class="toggler card-title btn btn-outline-primary" id="teacher">Create</button>
                 </div>
               </div>
             </div>
@@ -92,8 +92,8 @@
                       {% csrf_token %} {{teacherForm}}
                       <br />
                       <br />
-                      <button name="teacher_form" type="submit">Submit</button>
-                      <button class="toggler" id="teacher">Go back</button>
+                      <button class="btn btn-outline-success" name="teacher_form" type="submit">Submit</button>
+                      <button class="toggler btn btn-outline-danger" id="teacher">Cancel</button>
                     </form>
                   </div>
                 </div>

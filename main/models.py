@@ -56,6 +56,22 @@ class Student(models.Model):
         return (
                 f"{self.first_name+' '+self.last_name}"
         )
+    
+    def progressYear(self):
+        if self.year == 4:
+            self.delete()
+        else:
+            self.year+=1
+    
+    def getYear(self):
+        if self.year == 1:
+            return 'Freshman'
+        elif self.year == 2:
+            return 'Sophomore'
+        elif self.year == 3:
+            return 'Junior'
+        else:
+            return 'Senior'
 
 class Class(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, blank=True, null=True)

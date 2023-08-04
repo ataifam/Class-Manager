@@ -29,7 +29,7 @@
             </h5>
             <br>
             <a href="{% url 'main:delete' class.id 'class' %}">
-              <button>Delete Class</button>
+              <button type="button" class="btn btn-outline-danger">Delete Class</button>
             </a>
           </div>
         </div>
@@ -41,7 +41,7 @@
             <h5>New Class?</h5>
           </div>
           <div class="card-body">
-            <button class="toggler card-title" id="class">Create</button>
+            <button class="toggler card-title btn btn-outline-primary" id="class">Create</button>
           </div>
         </div>
       </div>
@@ -56,8 +56,8 @@
                 {% csrf_token %} {{form}}
                 <br />
                 <br />
-                <button type="submit">Submit</button>
-                <button class="toggler" id="class">Cancel</button>
+                <button class="btn btn-outline-success" type="submit">Submit</button>
+                <button class="toggler btn btn-outline-danger" id="class">Cancel</button>
               </form>
             </div>
           </div>
