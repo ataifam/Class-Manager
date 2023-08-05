@@ -16,16 +16,16 @@
       {% for class in subject.class_set.all %}
       <div class="col-2">
         <div id="{{class.id}}" class="card mb-3" style="max-width: 18rem;">
-          <div class="card-header">
-            <h5><a href="{% url 'main:class' class.name %}">{{class|capfirst}}</a></h5>
+          <div class="card-header bg-primary">
+            <h5><a class="title-header link-dark bg-primary fw-medium" href="{% url 'main:class' class.name %}">{{class|capfirst}} <i class="bi bi-arrow-up-right-circle"></i></a></h5>
           </div>
           <div class="card-body">
             <h5 class="card-title">
-              Faculty: <a href="{% url 'main:teacher' class.teacher.id %}">{{ class.teacher }}</a>
+              <span style="width: 100%;" class="m-1 badge bg-dark">Faculty: <span class="badge bg-secondary"> <a class="col-header link-light" href="{% url 'main:teacher' class.teacher.id %}">{{ class.teacher }}</a></span></span>
               <br />
-              Room {{ class.room }}
+              <span style="width: 100%;" class="m-1 badge bg-dark">Room <span class="badge bg-secondary"> {{ class.room }}</span></span>
               <br />
-              Students: {{ class.students.count }}
+              <span style="width: 100%;" class="m-1 badge bg-dark">Students: <span class="badge bg-secondary"> {{ class.students.count }}</span></span>
             </h5>
             <br>
             <a href="{% url 'main:delete' class.id 'class' %}">
@@ -37,8 +37,8 @@
       {% endfor %}
       <div id="start_create_class" class="col-2">
         <div class="card mb-3" style="max-width: 18rem">
-          <div class="card-header">
-            <h5>New Class?</h5>
+          <div class="card-header bg-primary">
+            <h5 class="text-dark bg-primary fw-medium">New Class?</h5>
           </div>
           <div class="card-body">
             <button class="toggler card-title btn btn-outline-primary" id="class">Create</button>
@@ -47,8 +47,8 @@
       </div>
       <div id="create_class" class="col-2" style="display: none;">
         <div class="card mb-3" style="max-width: 18rem">
-          <div class="card-header">
-            <h5>Create Class</h5>
+          <div class="card-header bg-primary">
+            <h5 class="text-dark bg-primary fw-medium">Create Class</h5>
           </div>
           <div class="card-body">
             <div class="card-title">

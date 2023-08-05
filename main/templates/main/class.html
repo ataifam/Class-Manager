@@ -10,16 +10,16 @@
 </h1>
 <br>
 <div class="container text-center">
-  <div class="row g-2">
-    <div class="col-6">
+  <div class="row g-2 justify-content-center">
+    <div class="col-4 m-2 shadow-sm p-3 mb-5 bg-body-tertiary rounded bg-light">
       <h3>Instructor:</h3>
       {% if class.teacher %}
-        <h3><a href="{% url 'main:teacher' class.teacher.id %}">{{class.teacher|title}}</a></h3>
+        <h3><a class="col-header" href="{% url 'main:teacher' class.teacher.id %}">{{class.teacher|title}}</a></h3>
       {% else %}
       <h3>None</h3>
       {% endif %}
     </div>
-    <div class="col-6">
+    <div class="col-4 m-2 shadow-sm p-3 mb-5 bg-body-tertiary rounded bg-light">
       <h3>Room {{ class.room }}</h3>
       <h3>Students: {{ class.students.all.count }}</h3>
     </div>
@@ -31,32 +31,30 @@
 <h3 class="d-inline-flex gap-1">
   <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample"
     aria-expanded="false" aria-controls="collapseWidthExample">
-    Assignment
+    Teacher Assignment
   </button>
 </h3>
+
 <div class="row">
   <div class="col">
     <div class="collapse collapse-vertical" id="collapseWidthExample">
-      <div class="card card-body">
-          <center><h3>{{class.building|capfirst}} Teachers</h3></center>
-          <hr>
-        <br>
+      <div class="card card-body shadow-sm p-3 mb-5 bg-body-tertiary rounded">
         <div id="teacher-container" class="container overflow-hidden text-center">
           <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
             {% for teacher in class.building.teacher_set.all %}
             {% if teacher != class.teacher %}
             <div class="col-2">
               <div id="{{teacher.id}}" class="card mb-3" style="max-width: 18rem;">
-                <div class="card-header">
-                  <h5><a href="{% url 'main:teacher' teacher.id %}">{{teacher|title}}</a></h5>
+                <div class="card-header bg-primary">
+                  <h5><a class="title-header link-dark bg-primary fw-medium" href="{% url 'main:teacher' teacher.id %}">{{teacher|title}} <i class="bi bi-arrow-up-right-circle"></i></a></h5>
                 </div>
                 <div class="card-body">
-                  <div class="card-title">
-                    Specialization: {{teacher.subject}}
+                  <span class="card-title">
+                    <span style="width: 100%;" class="m-1 badge bg-dark">Specialization: <span class="badge bg-secondary"> {{teacher.subject}}</span></span>
                     <br />
-                    Skill: {{teacher.skill}}
+                    <span style="width: 100%;" class="m-1 badge bg-dark">Skill: <span class="badge bg-secondary"> {{teacher.skill}}</span></span>
                     <br />
-                    Salary: {{teacher.salary}}
+                    <span style="width: 100%;" class="m-1 badge bg-dark">Salary: <span class="badge bg-secondary"> {{teacher.salary}}</span></span>
                     <br>
                     <br>
                     <form method="POST" action="">
@@ -68,13 +66,12 @@
                   </div>
                 </div>
               </div>
-            </div>
             {% endif %}
             {% endfor %}
             <div id="start_create_teacher" class="col-2">
               <div class="card mb-3" style="max-width: 18rem">
-                <div class="card-header">
-                  <h5>New Teacher?</h5>
+                <div class="card-header bg-primary">
+                  <h5 class="text-dark bg-primary fw-medium">New Teacher?</h5>
                 </div>
                 <div class="card-body">
                   <button class="toggler card-title btn btn-outline-primary" id="teacher">Create</button>
@@ -83,8 +80,8 @@
             </div>
             <div id="create_teacher" class="col-2" style="display: none;">
               <div class="card mb-3" style="max-width: 18rem">
-                <div class="card-header">
-                  <h5>Create Teacher</h5>
+                <div class="card-header bg-primary">
+                  <h5 class="text-dark bg-primary fw-medium">Create Teacher</h5>
                 </div>
                 <div class="card-body">
                   <div class="card-title">
@@ -114,12 +111,12 @@
     <option value="{{subject}}">{{subject}}</option>
     {% endfor %}
   </select>
-</form>
+</form><br>
 
 <div id="all" style="display: block" class="card">
-  <div class="card-header">
+  <div class="card-header bg-primary">
     <center>
-      <h3>Students</h3>
+      <h3 class="text-dark bg-primary fw-medium">Students</h3>
     </center>
   </div>
   <div class="card-body">
@@ -131,9 +128,9 @@
 
 {% for subject in subjects %}
 <div id="{{subject|title}}" style="display: none" class="card">
-  <div class="card-header">
+  <div class="card-header bg-primary">
     <center>
-      <h3>{{subject|title}} Students</h3>
+      <h3 class="text-dark bg-primary fw-medium">{{subject|title}} Students</h3>
     </center>
   </div>
   <div class="card-body">
