@@ -6,6 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from .gameFunctions import computeAvgSalary, computeAvgSkill, computeAvgGradeDist
 
 # Create your views here.
 
@@ -233,13 +234,18 @@ def all_teachers(request):
             messages.error(request, "Subject cannot be blank!")
             return redirect('main:all_teachers')
         teachers = Teacher.objects.filter(user_id=user.id, subject=subject)
+
+    avgSkill = computeAvgSkill(teachers)
+    avgSalary = computeAvgSalary(teachers)
     
     return render(request, "main/all_teachers.html", {
         'teachers': teachers,
         'subjects': subjects,
         'filter': filter,
+        'avgSkill': avgSkill,
+        'avgSalary': avgSalary,
         'form': teacherForm
-    }) 
+    })
 
 @login_required(login_url="main:login_view")
 def teacher(request, pk):
@@ -305,11 +311,14 @@ def all_students(request):
             messages.error(request, "Subject cannot be blank!")
             return redirect('main:all_students')
         students = Student.objects.filter(user_id=user.id, major=major)
+
+    gradeDist = computeAvgGradeDist(students)
     
     return render(request, "main/all_students.html", {
         'students': students,
         'subjects': subjects,
         'filter': filter,
+        'distribution': gradeDist, 
         'form': studentForm
     }) 
 
