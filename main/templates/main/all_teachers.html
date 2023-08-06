@@ -21,16 +21,16 @@
     {% for teacher in teachers %}
     <div class="col-2">
       <div id="{{teacher.id}}" class="card mb-3" style="max-width: 18rem;">
-        <div class="card-header">
-          <h5><a href="{% url 'main:teacher' teacher.id %}">{{teacher|title}}</a></h5>
+        <div class="card-header bg-primary">
+          <h5><a class="title-header link-dark bg-primary fw-medium" href="{% url 'main:teacher' teacher.id %}">{{teacher|title}} <i class="bi bi-arrow-up-right-circle"></i></a></h5>
         </div>
         <div class="card-body">
           <h5 class="card-title">
-            Specialization: {{teacher.subject}}
-            <br />
-            Skill: {{teacher.skill}}
-            <br />
-            Salary: {{teacher.salary}}
+            <span style="width: 100%;" class="m-1 badge bg-dark">Specialization: <span class="badge bg-secondary"> {{ teacher.subject }}</span></span>
+              <br />
+              <span style="width: 100%;" class="m-1 badge bg-dark">Skill: <span class="badge bg-secondary"> {{ teacher.skill }}</span></span>
+              <br />
+              <span style="width: 100%;" class="m-1 badge bg-dark">Salary: <span class="badge bg-secondary"> {{ teacher.salary }}</span></span>
           </h5>
           <br>
           <a href="{% url 'main:delete' teacher.id 'teacher' %}">
@@ -42,8 +42,8 @@
     {% endfor %}
     <div id="start_create_teacher" class="col-2">
       <div class="card mb-3" style="max-width: 18rem">
-        <div class="card-header">
-          New Teacher?
+        <div class="card-header bg-primary">
+          <h5 class="text-dark bg-primary fw-medium">New Teacher?</h5>
         </div>
         <div class="card-body">
           <button class="toggler btn btn-outline-primary" id="teacher">Create</button>
@@ -52,8 +52,8 @@
     </div>
     <div id="create_teacher" class="col-2" style="display: none;">
       <div class="card mb-3" style="max-width: 18rem">
-        <div class="card-header">
-          <h5>Create Teacher</h5>
+        <div class="card-header bg-primary">
+          <h5 class="text-dark bg-primary fw-medium">Create Teacher</h5>
         </div>
         <div class="card-body">
           <div class="card-title">

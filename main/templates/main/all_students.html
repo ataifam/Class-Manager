@@ -21,16 +21,16 @@
     {% for student in students %}
     <div class="col-2">
       <div id="{{student.id}}" class="card mb-3" style="max-width: 18rem;">
-        <div class="card-header">
-          <h5><a href="{% url 'main:student' student.id %}">{{student|title}}</a></h5>
+        <div class="card-header bg-primary">
+          <h5><a class="title-header link-dark bg-primary fw-medium" href="{% url 'main:student' student.id %}">{{student|title}}</a></h5>
         </div>
         <div class="card-body">
           <h5 class="card-title">
-            {{student.getYear}}
-      <br />
-            Major: {{student.major}}
-            <br />
-            Average Grade: {{student.average_grade}}
+            <span style="width: 100%;" class="m-1 badge bg-dark">Year: <span class="badge bg-secondary"> {{ student.getYear }}</span></span>
+              <br />
+              <span style="width: 100%;" class="m-1 badge bg-dark">Major: <span class="badge bg-secondary"> {{ student.major }}</span></span>
+              <br />
+              <span style="width: 100%;" class="m-1 badge bg-dark">Average Grade: <span class="badge bg-secondary"> {{ student.average_grade }}</span></span>
           </h5>
           <br>
           <a href="{% url 'main:delete' student.id 'student' %}">
@@ -42,8 +42,8 @@
     {% endfor %}
     <div id="start_create_student" class="col-2">
       <div class="card mb-3" style="max-width: 18rem">
-        <div class="card-header">
-          New Student?
+        <div class="card-header bg-primary">
+          <h5 class="text-dark bg-primary fw-medium">New Student?</h5>
         </div>
         <div class="card-body">
           <button class="toggler btn btn-outline-primary" id="student">Create</button>
@@ -52,8 +52,8 @@
     </div>
     <div id="create_student" class="col-2" style="display: none;">
       <div class="card mb-3" style="max-width: 18rem">
-        <div class="card-header">
-          <h5>Create Student</h5>
+        <div class="card-header bg-primary">
+          <h5 class="text-dark bg-primary fw-medium">Create Student</h5>
         </div>
         <div class="card-body">
           <div class="card-title">
