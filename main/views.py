@@ -350,3 +350,16 @@ def student(request, pk):
         'subjects': subjects,
         'form': studentForm
     })
+
+@login_required(login_url="main:login_view")
+def nextYear(request):
+    user = request.user
+    user_school = get_object_or_404(School, user_id=user.id)
+    students = Student.objects.all()
+
+    user_school.advanceYear()
+    for student in students:
+        student.progressYear()
+    
+    messages.success(request, "Successfully advanced to school year!")
+    return redirect(request.META.get('HTTP_REFERER', '/'))

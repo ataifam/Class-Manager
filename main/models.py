@@ -9,10 +9,15 @@ class School(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
     name = models.CharField(max_length=30, default="My New School")
     player_name = models.CharField(max_length=30, unique=True)
+    year = models.IntegerField(default=1)
 
     #override save method to provide default for player name
     def setName(self, *args, **kwargs):
         self.player_name = self.user.username
+
+    def advanceYear(self):
+        self.year+=1
+        self.save()
 
 @receiver(post_save, sender=User)
 def NewSchool(sender, instance, created, **kwargs):
@@ -62,6 +67,7 @@ class Student(models.Model):
             self.delete()
         else:
             self.year+=1
+            self.save()
     
     def getYear(self):
         if self.year == 1:
