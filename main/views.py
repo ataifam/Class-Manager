@@ -363,3 +363,12 @@ def nextYear(request):
     
     messages.success(request, "Successfully advanced to school year!")
     return redirect(request.META.get('HTTP_REFERER', '/'))
+
+@login_required(login_url="main:login_view")
+def train(request, pk):
+    user = request.user
+    teacher = get_object_or_404(Teacher, user_id=user.id, id=pk)
+    
+    teacher.train()
+    messages.success(request, "Teacher successfully trained!")
+    return redirect(request.META.get('HTTP_REFERER', '/'))

@@ -27,4 +27,5 @@ urlpatterns = [
     path('student/<int:pk>', views.student, name='student'),
 
     path('nextYear/', views.nextYear, name='nextYear'),
+    path('train/<int:pk>', views.train, name='train'),
 ]

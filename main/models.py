@@ -49,6 +49,12 @@ class Teacher(models.Model):
                 f"{self.first_name+' '+self.last_name}"
         )
     
+    def train(self):
+        if self.skill == 5:
+            return
+        self.skill+=1
+        self.save()
+    
 class Student(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, blank=True, null=True)
     first_name = models.CharField(max_length=50)
