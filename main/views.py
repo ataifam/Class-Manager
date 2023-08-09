@@ -51,6 +51,7 @@ def home(request):
 @login_required(login_url="main:login_view")
 def search(request):
     user = request.user
+    user_school = get_object_or_404(School, user_id=user.id)
     q = request.GET.get('q') if bool(request.GET.get('q', False)) else None
     if q is not None:
             subjects = Subject.objects.filter(user_id=user.id, name__icontains=q)[0:15]
@@ -61,6 +62,7 @@ def search(request):
         messages.error(request, "Invalid search entry. Please try again!")
 
     return render(request, "main/search.html", {
+        'school': user_school,
         'subjects': subjects,
         'classes': classes,
         'teachers': teachers,
@@ -142,6 +144,7 @@ def delete(request, pk, option):
 @login_required(login_url="main:login_view")
 def building(request, pk):
     user = get_object_or_404(User, id=request.user.id)
+    user_school = get_object_or_404(School, user_id=user.id)
     subjects = Subject.objects.filter(user_id=user.id)
     building = get_object_or_404(Subject, user=user.id, id=pk)
     classForm = ClassForm()
@@ -156,6 +159,7 @@ def building(request, pk):
                     messages.success(request, "Class creation successful!")
 
     return render(request, "main/building.html", {
+        'school': user_school,
         'subject': building,
         'subjects': subjects,
         'form': classForm,
@@ -164,6 +168,7 @@ def building(request, pk):
 @login_required(login_url="main:login_view")
 def class_view(request, name):
     user = get_object_or_404(User, id=request.user.id)
+    user_school = get_object_or_404(School, user_id=user.id)
     subjects = Subject.objects.filter(user_id=user.id)
     user_class = get_object_or_404(Class, user_id=user.id, name=name)
     students = Student.objects.filter(user_id=user.id)
@@ -191,6 +196,7 @@ def class_view(request, name):
         return redirect('main:class', name)
 
     return render(request, "main/class.html", {
+        'school': user_school,
         'class': user_class,
         'students': students,
         'subjects': subjects,
@@ -201,7 +207,9 @@ def class_view(request, name):
 @login_required(login_url="main:login_view")
 def create_teacher(request, name):
     user = request.user
-    if request.method == 'POST':
+    user_school = get_object_or_404(School, user_id=user.id)
+    # creating teacher requires tokens
+    if request.method == 'POST' and user_school.checkTokens() > 0:
        teacherForm = TeacherForm(request.POST)
        if teacherForm.is_valid():
             teacher = teacherForm.save(commit=False)
@@ -210,7 +218,6 @@ def create_teacher(request, name):
                 user_class = get_object_or_404(Class, user_id=user.id, name=name)
                 teacher.subject = user_class.building
             else:
-                print('2')
                 subject = request.POST.get('subject') if bool(request.POST.get('subject', False)) else None
                 if subject is None:
                     messages.error(request, "Subject cannot be blank!")
@@ -218,12 +225,16 @@ def create_teacher(request, name):
                 subject, created = Subject.objects.get_or_create(user_id=user.id, name=subject)
                 teacher.subject = subject
             teacher.save()
+            user_school.useToken()
             messages.success(request, "Teacher creation successful!")
+    else:
+        messages.error(request, "No tokens left! Advance to the next year to reset your tokens!")
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
 @login_required(login_url="main:login_view")
 def all_teachers(request):
     user = request.user
+    user_school = get_object_or_404(School, user_id=user.id)
     subjects = Subject.objects.filter(user_id=user.id)
     teachers = Teacher.objects.filter(user_id=user.id)
     teacherForm = TeacherForm()
@@ -240,6 +251,7 @@ def all_teachers(request):
     avgSalary = computeAvgSalary(teachers)
     
     return render(request, "main/all_teachers.html", {
+        'school': user_school,
         'teachers': teachers,
         'subjects': subjects,
         'filter': filter,
@@ -251,6 +263,7 @@ def all_teachers(request):
 @login_required(login_url="main:login_view")
 def teacher(request, pk):
     user = request.user
+    user_school = get_object_or_404(School, user_id=user.id)
     subjects = Subject.objects.filter(user_id=user.id)
     teacher = get_object_or_404(Teacher, user_id=user.id, id=pk)
     classes = Class.objects.filter(user_id=request.user.id, teacher=teacher)
@@ -272,6 +285,7 @@ def teacher(request, pk):
 
 
     return render(request, "main/teacher.html", {
+        'school': user_school,
         'teacher': teacher,
         'classes': classes,
         'subjects': subjects,
@@ -281,7 +295,9 @@ def teacher(request, pk):
 @login_required(login_url="main:login_view")
 def create_student(request):
     user = request.user
-    if request.method == 'POST':
+    user_school = get_object_or_404(School, user_id=user.id)
+    # creating student requires tokens
+    if request.method == 'POST' and user_school.checkTokens() > 0:
         studentForm = StudentForm(request.POST)
         if studentForm.is_valid():
             student = studentForm.save(commit=False)
@@ -294,13 +310,17 @@ def create_student(request):
             subject, created = Subject.objects.get_or_create(user=user, name=major)
             student.major = subject
             student.save()
+            user_school.useToken()
             messages.success(request, "Student creation successful!")
+    else:
+        messages.error(request, "No tokens left! Advance to the next year to reset your tokens!")
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
 @login_required(login_url="main:login_view")
 def all_students(request):
     user = request.user
+    user_school = get_object_or_404(School, user_id=user.id)
     subjects = Subject.objects.filter(user_id=user.id)
     students = Student.objects.filter(user_id=user.id)
     studentForm = StudentForm()
@@ -317,6 +337,7 @@ def all_students(request):
     sorted_gradeDist = dict(sorted(gradeDist.items()))
     
     return render(request, "main/all_students.html", {
+        'school': user_school,
         'students': students,
         'subjects': subjects,
         'filter': filter,
@@ -327,6 +348,7 @@ def all_students(request):
 @login_required(login_url="main:login_view")
 def student(request, pk):
     user = request.user
+    user_school = get_object_or_404(School, user_id=user.id)
     subjects = Subject.objects.filter(user_id=user.id)
     student = get_object_or_404(Student, user_id=user.id, id=pk)
     classes = Class.objects.filter(user_id=user.id)
@@ -347,6 +369,7 @@ def student(request, pk):
 
 
     return render(request, "main/student.html", {
+        'school': user_school,
         'student': student,
         'classes': classes,
         'subjects': subjects,
@@ -357,7 +380,7 @@ def student(request, pk):
 def nextYear(request):
     user = request.user
     user_school = get_object_or_404(School, user_id=user.id)
-    students = Student.objects.all()
+    students = Student.objects.filter(user_id=user.id)
 
     user_school.advanceYear()
     for student in students:
@@ -369,8 +392,13 @@ def nextYear(request):
 @login_required(login_url="main:login_view")
 def train(request, pk):
     user = request.user
+    user_school = get_object_or_404(School, user_id=user.id)
     teacher = get_object_or_404(Teacher, user_id=user.id, id=pk)
-
-    teacher.train()
-    messages.success(request, "Teacher successfully trained!")
+    # training teacher requires tokens
+    if user_school.checkTokens() > 0:
+        teacher.train()
+        user_school.useToken()
+        messages.success(request, "Teacher successfully trained!")
+    else:
+        messages.error(request, "No tokens left! Advance to the next year to reset your tokens!")
     return redirect(request.META.get('HTTP_REFERER', '/'))

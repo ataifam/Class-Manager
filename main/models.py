@@ -10,6 +10,7 @@ class School(models.Model):
     name = models.CharField(max_length=30, default="My New School")
     player_name = models.CharField(max_length=30, unique=True)
     year = models.IntegerField(default=1)
+    actionTokens = models.IntegerField(default=3)
 
     #override save method to provide default for player name
     def setName(self, *args, **kwargs):
@@ -17,6 +18,15 @@ class School(models.Model):
 
     def advanceYear(self):
         self.year+=1
+        # reset user action tokens every year
+        self.actionTokens = 3
+        self.save()
+
+    def checkTokens(self):
+        return self.actionTokens
+    
+    def useToken(self):
+        self.actionTokens-=1
         self.save()
 
 @receiver(post_save, sender=User)
