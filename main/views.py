@@ -206,10 +206,11 @@ def create_teacher(request, name):
        if teacherForm.is_valid():
             teacher = teacherForm.save(commit=False)
             teacher.user = user
-            if name is not None:
+            if name != 'new':
                 user_class = get_object_or_404(Class, user_id=user.id, name=name)
                 teacher.subject = user_class.building
             else:
+                print('2')
                 subject = request.POST.get('subject') if bool(request.POST.get('subject', False)) else None
                 if subject is None:
                     messages.error(request, "Subject cannot be blank!")
@@ -313,12 +314,13 @@ def all_students(request):
         students = Student.objects.filter(user_id=user.id, major=major)
 
     gradeDist = computeAvgGradeDist(students)
+    sorted_gradeDist = dict(sorted(gradeDist.items()))
     
     return render(request, "main/all_students.html", {
         'students': students,
         'subjects': subjects,
         'filter': filter,
-        'distribution': gradeDist, 
+        'distribution': sorted_gradeDist, 
         'form': studentForm
     }) 
 
@@ -368,7 +370,7 @@ def nextYear(request):
 def train(request, pk):
     user = request.user
     teacher = get_object_or_404(Teacher, user_id=user.id, id=pk)
-    
+
     teacher.train()
     messages.success(request, "Teacher successfully trained!")
     return redirect(request.META.get('HTTP_REFERER', '/'))

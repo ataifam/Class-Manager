@@ -90,13 +90,22 @@
     </div>
   </nav>
   <div class="container">
-    {% if messages %} {% for message in messages %}
-    <div class="alert alert-warning" role="alert">
-      {{message}}
-    </div>
-    {% endfor %}
+    {% if request.user.is_authenticated %}
     <br />
-    {% endif %} {% block content %}{% endblock %}
+    <div class="flex">
+      <a href="{% url 'main:nextYear' %}"><button type="button" class="btn btn-outline-primary">Advance Year</button></a>
+    </div>
+      <hr>
+      {% endif %}
+      <br />
+      {% if messages %} {% for message in messages %}
+      <div class="alert alert-warning" role="alert">
+        {{message}}
+      </div>
+      {% endfor %}
+      <br />
+      {% endif %}
+    {% block content %}{% endblock %}
   </div>
 </body>
 

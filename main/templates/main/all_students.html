@@ -4,7 +4,11 @@
 
 {% if request.user.is_authenticated %}
 <h1>
+  {% if filter is None %}
   <center>Students</center>
+  {% else %}
+  <center>{{filter|capfirst}} Students</center>
+  {% endif %}
 </h1>
 
 <br>
@@ -12,8 +16,6 @@
   <div class="row g-2 justify-content-center">
     <div class="col-4 m-2 shadow-sm p-3 mb-5 bg-body-tertiary rounded bg-light">
       <h3>Student Count: {{students.count}}</h3>
-      <br>
-      <a href="{% url 'main:nextYear' %}"><button type="button" class="btn btn-outline-primary">Advance Year</button></a>
     </div>
     <div class="col-4 m-2 shadow-sm p-3 mb-5 bg-body-tertiary rounded bg-light align-items-center justify-content-center">
       <h3>Average Grade Distribution</h3>
@@ -53,7 +55,7 @@
           </h5>
           <br>
           <a href="{% url 'main:delete' student.id 'student' %}">
-            <button type="button" class="btn btn-outline-danger">Delete Student</button>
+            <button type="button" class="btn btn-outline-danger">Expel</button>
           </a>
         </div>
       </div>

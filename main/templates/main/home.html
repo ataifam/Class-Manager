@@ -3,36 +3,6 @@
 {% block content %}
 
 {% if request.user.is_authenticated %}
-<br>
-
-<div class="container text-center">
-  <div class="row">
-    <div class="col-md-4 ms-auto">
-      <div id="school-container">
-        {% if school %}
-        <h5>{{school.name}}</h5>
-        <h5>Superintendent: {{school.player_name}}</h5>
-        <h5>Year: {{school.year}}</h5>
-
-        <div id="start_create_school">
-          <button class="toggler btn btn-outline-primary" id="school">Edit</button>
-          <a href="{% url 'main:delete' school.id 'school' %}">
-            <button type="button" class="btn btn-outline-danger">Start over</button>
-          </a>
-        </div>
-        <div id="create_school" style="display: none">
-          <form method="POST" action="">
-            {% csrf_token %} {{schoolForm}}
-            <button name="school_form" class="btn btn-outline-success" type="submit">Submit</button>
-          </form>
-          <button class="toggler btn btn-outline-danger" id="school">Cancel</button>
-        </div>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-</div>
-<br>
 <center>
   <h1>Departments</h1>
 </center>
