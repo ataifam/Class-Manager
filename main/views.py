@@ -228,7 +228,7 @@ def create_teacher(request, name):
             user_school.useToken()
             messages.success(request, "Teacher creation successful!")
     else:
-        messages.error(request, "No tokens left! Advance to the next year to reset your tokens!")
+        messages.error(request, "No tokens left! Advance Year to reset your tokens!")
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
 @login_required(login_url="main:login_view")
@@ -313,7 +313,7 @@ def create_student(request):
             user_school.useToken()
             messages.success(request, "Student creation successful!")
     else:
-        messages.error(request, "No tokens left! Advance to the next year to reset your tokens!")
+        messages.error(request, "No tokens left! Advance Year to reset your tokens!")
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
@@ -386,8 +386,8 @@ def nextYear(request):
     for student in students:
         student.progressYear()
     
-    messages.success(request, "Successfully advanced to school year!")
-    return redirect(request.META.get('HTTP_REFERER', '/'))
+    messages.success(request, "Successfully advanced school year!")
+    return redirect('main:home')
 
 @login_required(login_url="main:login_view")
 def train(request, pk):
@@ -400,5 +400,5 @@ def train(request, pk):
         user_school.useToken()
         messages.success(request, "Teacher successfully trained!")
     else:
-        messages.error(request, "No tokens left! Advance to the next year to reset your tokens!")
+        messages.error(request, "No tokens left! Advance Year to reset your tokens!")
     return redirect(request.META.get('HTTP_REFERER', '/'))

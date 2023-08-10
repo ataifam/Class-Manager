@@ -45,6 +45,9 @@
               <br />
               <span style="width: 100%;" class="m-1 badge bg-dark">Students: <span class="badge bg-secondary"> {{ class.students.count }}</span></span>
           </h5>
+          <a href="{% url 'main:delete' class.id 'class' %}">
+            <button type="button" class="btn btn-outline-danger">Remove</button>
+          </a>
         </div>
       </div>
     </div>

@@ -14,7 +14,7 @@
     <div class="col-4 m-2 shadow-sm p-3 mb-5 bg-body-tertiary rounded bg-light">
       <h3>Instructor:</h3>
       {% if class.teacher %}
-        <h3><a class="col-header" href="{% url 'main:teacher' class.teacher.id %}">{{class.teacher|title}}</a><a class="ms-4" href="{% url 'main:train' class.teacher.id %}"><button class="btn btn-outline-warning"><i class="bi bi-briefcase"></i></button></a></h3>
+        <h3><a class="col-header" href="{% url 'main:teacher' class.teacher.id %}">{{class.teacher|title}}</a>{% if school.checkTokens > 0 %}<a class="ms-4" href="{% url 'main:train' class.teacher.id %}"><button class="btn btn-outline-warning"><i class="bi bi-briefcase"></i></button></a>{% endif %}</h3>
       {% else %}
       <h3>None</h3>
       {% endif %}
@@ -49,14 +49,13 @@
                   <h5><a class="title-header link-dark bg-primary fw-medium" href="{% url 'main:teacher' teacher.id %}">{{teacher|title}} <i class="bi bi-arrow-up-right-circle"></i></a></h5>
                 </div>
                 <div class="card-body">
-                  <span class="card-title">
+                  <h5 class="card-title">
                     <span style="width: 100%;" class="m-1 badge bg-dark">Specialization: <span class="badge bg-secondary"> {{teacher.subject}}</span></span>
                     <br />
-                    <span style="width: 100%;" class="m-1 badge bg-dark">Skill: <span class="badge bg-secondary"> {{ teacher.skill }}</span> <a class="float-end" href="{% url 'main:train' teacher.id %}"><badge class="badge bg-warning"><i class="bi bi-briefcase-fill"></i></badge></a></span>
+                    <span style="width: 100%;" class="m-1 badge bg-dark">Skill: <span class="badge bg-secondary"> {{ teacher.skill }}</span>{% if school.checkTokens > 0 %} <a class="float-end" href="{% url 'main:train' teacher.id %}"><span class="badge bg-warning"><i class="bi bi-briefcase-fill"></i></span></a>{% endif %}</span>
                     <br />
                     <span style="width: 100%;" class="m-1 badge bg-dark">Salary: <span class="badge bg-secondary"> {{teacher.salary}}</span></span>
-                    <br>
-                    <br>
+                    </h5>
                     <form method="POST" action="">
                       {% csrf_token %}
                       <button class="btn btn-outline-primary" type="submit" name="substitute" value="{{teacher.id}}">
@@ -74,14 +73,20 @@
                   <h5 class="text-dark bg-primary fw-medium">New Teacher?</h5>
                 </div>
                 <div class="card-body">
-                  <button class="toggler card-title btn btn-outline-primary" id="teacher">Create</button>
+                  {% if school.checkTokens > 0 %}
+                  <button class="toggler card-title btn btn-outline-primary" id="teacher">Hire</button>
+                  {% else %}
+                  <span style="width: 100%;" class="badge bg-dark">No <i class="bi bi-coin text-warning"></i> left!</span>
+                  <br />
+                  <span style="width: 100%;" class="badge bg-dark">Advance Year for more <i class="bi bi-coin text-warning"></i>!</span>
+                  {% endif %}
                 </div>
               </div>
             </div>
             <div id="create_teacher" class="col-2" style="display: none;">
               <div class="card mb-3" style="max-width: 18rem">
                 <div class="card-header bg-primary">
-                  <h5 class="text-dark bg-primary fw-medium">Create Teacher</h5>
+                  <h5 class="text-dark bg-primary fw-medium">Hire Teacher</h5>
                 </div>
                 <div class="card-body">
                   <div class="card-title">

@@ -94,22 +94,22 @@
     </div>
   </nav>
   <div class="container">
+    {% if messages %} {% for message in messages %}
+    <div class="alert alert-warning" role="alert">
+      {{message}}
+    </div>
+    {% endfor %}
+    <br />
+    {% endif %}
     {% if request.user.is_authenticated %}
     <br />
     <div class="row g-2 justify-content-evenly text-center">
       <a class="col-2" href="{% url 'main:nextYear' %}"><button type="button" class="btn btn-outline-primary rounded-pill">Advance Year</button></a>
-      <p class="col-1 rounded-pill btn bg-warning text-dark token-display"><i class="bi bi-coin">{{school.checkTokens}}</i></p>
+      <p class="col-1 rounded-pill btn bg-warning text-dark token-display"><i class="bi bi-coin"> {{school.checkTokens}}</i></p>
     </div>
       <hr>
       {% endif %}
       <br />
-      {% if messages %} {% for message in messages %}
-      <div class="alert alert-warning" role="alert">
-        {{message}}
-      </div>
-      {% endfor %}
-      <br />
-      {% endif %}
     {% block content %}{% endblock %}
   </div>
 </body>

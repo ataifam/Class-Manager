@@ -53,7 +53,6 @@
               <br />
               <span style="width: 100%;" class="m-1 badge bg-dark">Average Grade: <span class="badge bg-secondary"> {{ student.average_grade }}</span></span>
           </h5>
-          <br>
           <a href="{% url 'main:delete' student.id 'student' %}">
             <button type="button" class="btn btn-outline-danger">Expel</button>
           </a>
@@ -67,14 +66,20 @@
           <h5 class="text-dark bg-primary fw-medium">New Student?</h5>
         </div>
         <div class="card-body">
-          <button class="toggler btn btn-outline-primary" id="student">Create</button>
+          {% if school.checkTokens > 0 %}
+          <button class="toggler btn btn-outline-primary" id="student">Admit</button>
+          {% else %}
+                  <span style="width: 100%;" class="badge bg-dark">No <i class="bi bi-coin text-warning"></i> left!</span>
+                  <br />
+                  <span style="width: 100%;" class="badge bg-dark">Advance Year for more <i class="bi bi-coin text-warning"></i>!</span>
+                  {% endif %}
         </div>
       </div>
     </div>
     <div id="create_student" class="col-2" style="display: none;">
       <div class="card mb-3" style="max-width: 18rem">
         <div class="card-header bg-primary">
-          <h5 class="text-dark bg-primary fw-medium">Create Student</h5>
+          <h5 class="text-dark bg-primary fw-medium">Admit Student</h5>
         </div>
         <div class="card-body">
           <div class="card-title">
