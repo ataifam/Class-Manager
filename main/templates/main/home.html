@@ -21,14 +21,11 @@
           </div>
           <div class="card-body">
             <h5 class="card-title">
-              <span style="width: 100%;" class="m-1 badge bg-dark">Classes: <span class="badge bg-secondary"> {{
-                  subject.class_set.count }}</span></span>
+              <span style="width: 100%;" class="m-1 badge bg-dark">Classes: <span class="badge bg-secondary"> {{subject.class_set.count}}</span></span>
               <br />
-              <span style="width: 100%;" class="m-1 badge bg-dark">Faculty: <span class="badge bg-secondary"> {{
-                  subject.teacher_set.count }}</span></span>
+              <span style="width: 100%;" class="m-1 badge bg-dark">Faculty: <span class="badge bg-secondary"> {{subject.teacher_set.count}}</span></span>
               <br />
-              <span style="width: 100%;" class="m-1 badge bg-dark">Students: <span class="badge bg-secondary"> {{
-                  subject.student_set.count }}</span></span>
+              <span style="width: 100%;" class="m-1 badge bg-dark">Students: <span class="badge bg-secondary"> {{subject.student_set.count}}</span></span>
             </h5>
             <a href="{% url 'main:delete' subject.id 'subject' %}">
               <button type="button" class="btn btn-outline-danger">Demolish</button>

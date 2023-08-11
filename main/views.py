@@ -6,7 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .gameFunctions import computeAvgSalary, computeAvgSkill, computeAvgGradeDist
+from .gameFunctions import computeAvgSalary, computeAvgSkill, computeAvgGradeDist, computeFinancials
 
 # Create your views here.
 
@@ -17,26 +17,20 @@ def home(request):
     classes = Class.objects.filter(user_id=user.id)
     teachers = Teacher.objects.filter(user_id=user.id)
     students = Student.objects.filter(user_id=user.id)
-    schoolForm = SchoolForm(instance=user_school)
     subjectForm = SubjectForm()
+
+    costs = computeFinancials(user, user_school)
     
     if request.method == 'POST':
-        if 'school_form' in request.POST:
-            schoolForm = SchoolForm(instance=user_school, data=request.POST)
-            if schoolForm.is_valid:
-                schoolForm.save()
-                messages.success(request, "School successfully edited!")
-                redirect('main:home')
-        elif 'subject_form' in request.POST:
             subjectForm = SubjectForm(request.POST)
             if subjectForm.is_valid():
                 subject = subjectForm.save(commit=False)
                 subject.user = user
                 subject.save()
                 messages.success(request, "Building successfully created!")
-                redirect('main:home')
-        messages.error(request, "An error has occured, please try again!")
-        redirect('main:home')
+                return redirect('main:home')
+            messages.error(request, "An error has occured, please try again!")
+            return redirect('main:home')
 
     return render(request, "main/home.html", {
         'school': user_school,
@@ -44,14 +38,17 @@ def home(request):
         'classes': classes,
         'teachers': teachers,
         'students': students,
-        'schoolForm': schoolForm,
         'subjectForm': subjectForm,
+        'costs': costs,
     })
 
 @login_required(login_url="main:login_view")
 def search(request):
     user = request.user
     user_school = get_object_or_404(School, user_id=user.id)
+
+    costs = computeFinancials(user, user_school)
+
     q = request.GET.get('q') if bool(request.GET.get('q', False)) else None
     if q is not None:
             subjects = Subject.objects.filter(user_id=user.id, name__icontains=q)[0:15]
@@ -67,6 +64,30 @@ def search(request):
         'classes': classes,
         'teachers': teachers,
         'students': students,
+        'costs': costs,
+    })
+
+@login_required(login_url="main:login_view")
+def settings(request):
+    user = request.user
+    user_school = get_object_or_404(School, user_id=user.id)
+    schoolForm = SchoolForm(instance=user_school)
+
+    costs = computeFinancials(user, user_school)
+
+    if request.method == 'POST':
+            schoolForm = SchoolForm(instance=user_school, data=request.POST)
+            if schoolForm.is_valid:
+                schoolForm.save()
+                messages.success(request, "School successfully edited!")
+                return redirect('main:home')
+            messages.error(request, "An error has occured, please try again!")
+            return redirect('main:home')
+
+    return render(request, "main/settings.html", {
+        'school': user_school,
+        'schoolForm': schoolForm,
+        'costs': costs,
     })
 
 def login_view(request):
@@ -149,6 +170,8 @@ def building(request, pk):
     building = get_object_or_404(Subject, user=user.id, id=pk)
     classForm = ClassForm()
 
+    costs = computeFinancials(user, user_school)
+
     if request.method == 'POST':
         classForm = ClassForm(request.POST)
         if classForm.is_valid():
@@ -163,6 +186,7 @@ def building(request, pk):
         'subject': building,
         'subjects': subjects,
         'form': classForm,
+        'costs': costs,
     })
 
 @login_required(login_url="main:login_view")
@@ -174,6 +198,9 @@ def class_view(request, name):
     students = Student.objects.filter(user_id=user.id)
     teacherForm = TeacherForm()
     studentForm = StudentForm()
+
+    costs = computeFinancials(user, user_school)
+
     if request.method == 'POST':
         # register student for class button clicked
         if 'register' in request.POST:
@@ -202,6 +229,7 @@ def class_view(request, name):
         'subjects': subjects,
         'teacherForm': teacherForm,
         'studentForm': studentForm,
+        'costs': costs,
     })
 
 @login_required(login_url="main:login_view")
@@ -238,6 +266,9 @@ def all_teachers(request):
     subjects = Subject.objects.filter(user_id=user.id)
     teachers = Teacher.objects.filter(user_id=user.id)
     teacherForm = TeacherForm()
+
+    costs = computeFinancials(user, user_school)
+
     filter = request.GET.get('filter') if bool(request.GET.get('filter', False)) else None
     if filter is not None:
         try:
@@ -257,7 +288,8 @@ def all_teachers(request):
         'filter': filter,
         'avgSkill': avgSkill,
         'avgSalary': avgSalary,
-        'form': teacherForm
+        'form': teacherForm,
+        'costs': costs,
     })
 
 @login_required(login_url="main:login_view")
@@ -268,6 +300,9 @@ def teacher(request, pk):
     teacher = get_object_or_404(Teacher, user_id=user.id, id=pk)
     classes = Class.objects.filter(user_id=request.user.id, teacher=teacher)
     teacherForm = TeacherForm(instance=teacher)
+
+    costs = computeFinancials(user, user_school)
+
     if request.method == 'POST':
         teacherForm = TeacherForm(request.POST, instance=teacher)
         if teacherForm.is_valid():
@@ -289,7 +324,8 @@ def teacher(request, pk):
         'teacher': teacher,
         'classes': classes,
         'subjects': subjects,
-        'form': teacherForm
+        'form': teacherForm,
+        'costs': costs
     })
 
 @login_required(login_url="main:login_view")
@@ -324,6 +360,9 @@ def all_students(request):
     subjects = Subject.objects.filter(user_id=user.id)
     students = Student.objects.filter(user_id=user.id)
     studentForm = StudentForm()
+
+    costs = computeFinancials(user, user_school)
+
     filter = request.GET.get('filter') if bool(request.GET.get('filter', False)) else None
     if filter is not None:
         try:
@@ -342,7 +381,8 @@ def all_students(request):
         'subjects': subjects,
         'filter': filter,
         'distribution': sorted_gradeDist, 
-        'form': studentForm
+        'form': studentForm,
+        'costs': costs,
     }) 
 
 @login_required(login_url="main:login_view")
@@ -353,6 +393,9 @@ def student(request, pk):
     student = get_object_or_404(Student, user_id=user.id, id=pk)
     classes = Class.objects.filter(user_id=user.id)
     studentForm = StudentForm(instance=student)
+
+    costs = computeFinancials(user, user_school)
+
     if request.method == 'POST':
         studentForm = StudentForm(request.POST, instance=student)
         if studentForm.is_valid:
@@ -373,18 +416,23 @@ def student(request, pk):
         'student': student,
         'classes': classes,
         'subjects': subjects,
-        'form': studentForm
+        'form': studentForm,
+        'costs': costs,
     })
 
 @login_required(login_url="main:login_view")
 def nextYear(request):
     user = request.user
     user_school = get_object_or_404(School, user_id=user.id)
+    teachers = Teacher.objects.filter(user_id=user.id)
     students = Student.objects.filter(user_id=user.id)
 
     user_school.advanceYear()
     for student in students:
         student.progressYear()
+
+    print(computeFinancials(user, user_school))
+    #user_school.payCosts()
     
     messages.success(request, "Successfully advanced school year!")
     return redirect('main:home')

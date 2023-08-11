@@ -23,15 +23,12 @@
           </div>
           <div class="card-body">
             <h5 class="card-title">
-              <span style="width: 100%;" class="m-1 badge bg-dark">Faculty: <span class="badge bg-secondary"> <a
-                    class="col-header link-light" href="{% url 'main:teacher' class.teacher.id %}">{{ class.teacher
-                    }}</a></span></span>
+              <span style="width: 100%;" class="m-1 badge bg-dark">Faculty: <span class="badge bg-secondary">{% if class.teacher %} <a
+                    class="col-header link-light" href="{% url 'main:teacher' class.teacher.id %}">{{class.teacher}}</a>{% else %} TBA{% endif %}</span></span>
               <br />
-              <span style="width: 100%;" class="m-1 badge bg-dark">Room <span class="badge bg-secondary"> {{ class.room
-                  }}</span></span>
+              <span style="width: 100%;" class="m-1 badge bg-dark">Room: <span class="badge bg-secondary"> {{class.room}}</span></span>
               <br />
-              <span style="width: 100%;" class="m-1 badge bg-dark">Students: <span class="badge bg-secondary"> {{
-                  class.students.count }}</span></span>
+              <span style="width: 100%;" class="m-1 badge bg-dark">Students: <span class="badge bg-secondary"> {{class.students.count}}</span></span>
             </h5>
             <a href="{% url 'main:delete' class.id 'class' %}">
               <button type="button" class="btn btn-outline-danger">Remove</button>

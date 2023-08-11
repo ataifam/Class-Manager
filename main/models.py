@@ -11,6 +11,8 @@ class School(models.Model):
     player_name = models.CharField(max_length=30, unique=True)
     year = models.IntegerField(default=1)
     actionTokens = models.IntegerField(default=3)
+    money = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(1000000000)], blank=True, null=True, default=500000)
+    tuition = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100000)], blank=True, null=True, default=10000)
 
     #override save method to provide default for player name
     def setName(self, *args, **kwargs):
@@ -20,6 +22,10 @@ class School(models.Model):
         self.year+=1
         # reset user action tokens every year
         self.actionTokens = 3
+        self.save()
+
+    def payCosts(self, cost):
+        self.money+=cost
         self.save()
 
     def checkTokens(self):
@@ -72,7 +78,28 @@ class Teacher(models.Model):
         if self.skill == 5:
             return
         self.skill+=1
+        self.updateSalary()
         self.save()
+    
+    def updateSalary(self):
+        if self.skill == 1:
+            self.salary = 30000
+        elif self.skill == 2:
+            self.salary = 40000
+        elif self.skill == 3:
+            self.salary = 60000
+        elif self.skill == 4:
+            self.salary = 80000
+        else:
+            self.salary = 100000
+
+# when a new teacher is created update their salary
+@receiver(post_save, sender=Teacher)
+def NewTeacher(sender, instance, created, **kwargs):
+    if created:
+        teacher = instance
+        teacher.updateSalary()
+        teacher.save()
     
 class Student(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)

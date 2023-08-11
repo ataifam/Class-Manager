@@ -8,6 +8,7 @@ app_name = "main"
 urlpatterns = [
     path('', views.home, name='home'),
     path('search', views.search, name='search'),
+    path('settings', views.settings, name='settings'),
 
     path('login_view', views.login_view, name='login_view'),
     path('register_view', views.register_view, name='register_view'),

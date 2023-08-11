@@ -58,7 +58,7 @@
             <a class="nav-link active" aria-current="page" href="{% url 'main:all_students' %}">Students</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="">Settings</a>
+            <a class="nav-link active" aria-current="page" href="{% url 'main:settings' %}">Settings</a>
           </li>
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{% url 'main:logout_view' %}">Logout</a>
@@ -111,8 +111,12 @@
     <div class="row g-2 justify-content-evenly text-center">
       <a class="col-2" href="{% url 'main:nextYear' %}"><button type="button"
           class="btn btn-outline-primary rounded-pill">Advance Year</button></a>
-      <p class="col-1 rounded-pill btn bg-warning text-dark token-display"><i class="bi bi-coin">
-          {{school.checkTokens}}</i></p>
+      <p class="col-2">Funds: ${{school.money}}</p>
+      <p class="col-2">Year: {{school.year}}</p>
+      <p class="col-2">Estimated EOY Profit/Loss: ${{costs}}</p>
+      <div class="col-2">
+      <p class="rounded-pill btn bg-warning text-dark token-display"><i class="bi bi-coin">
+          {{school.checkTokens}}</i></p></div>
     </div>
     <hr>
     {% endif %}

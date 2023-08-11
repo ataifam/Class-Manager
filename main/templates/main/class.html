@@ -12,11 +12,11 @@
 <div class="container text-center">
   <div class="row g-2 justify-content-center">
     <div class="col-4 m-2 shadow-sm p-3 mb-5 bg-body-tertiary rounded bg-light">
-      <h3>{{class.teacher.get_skill_display}}:</h3>
       {% if class.teacher %}
+      <h3>{{class.teacher.get_skill_display}}:</h3>
       <h3><a class="col-header" href="{% url 'main:teacher' class.teacher.id %}">{{class.teacher|title}}</a></h3>
       {% else %}
-      <h3>None</h3>
+      <h3>Instructor: TBA</h3>
       {% endif %}
     </div>
     <div class="col-4 m-2 shadow-sm p-3 mb-5 bg-body-tertiary rounded bg-light">
@@ -57,8 +57,7 @@
                     <span style="width: 100%;" class="m-1 badge bg-dark">Specialization: <span
                         class="badge bg-secondary"> {{ teacher.subject }}</span></span>
                     <br />
-                    <span style="width: 100%;" class="m-1 badge bg-dark">Salary: <span class="badge bg-secondary"> {{
-                        teacher.salary }}</span></span>
+                    <span style="width: 100%;" class="m-1 badge bg-dark">Salary: <span class="badge bg-secondary"> {{teacher.salary}}</span></span>
                   </h5>
                   <form method="POST" action="">
                     {% csrf_token %}
