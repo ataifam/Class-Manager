@@ -17,7 +17,8 @@
     <div class="col-4 m-2 shadow-sm p-3 mb-5 bg-body-tertiary rounded bg-light">
       <h3>Student Count: {{students.count}}</h3>
     </div>
-    <div class="col-4 m-2 shadow-sm p-3 mb-5 bg-body-tertiary rounded bg-light align-items-center justify-content-center">
+    <div
+      class="col-4 m-2 shadow-sm p-3 mb-5 bg-body-tertiary rounded bg-light align-items-center justify-content-center">
       <h3>Average Grade Distribution</h3>
       <br />
       <h5>{% for grade, percentage in distribution.items %} {{grade}}: {{percentage}}% {% endfor %}</h5>
@@ -43,15 +44,19 @@
     <div class="col-2">
       <div id="{{student.id}}" class="card mb-3" style="max-width: 18rem;">
         <div class="card-header bg-primary">
-          <h5><a class="title-header link-dark bg-primary fw-medium" href="{% url 'main:student' student.id %}">{{student|title}}</a></h5>
+          <h5><a class="title-header link-dark bg-primary fw-medium"
+              href="{% url 'main:student' student.id %}">{{student|title}}</a></h5>
         </div>
         <div class="card-body">
           <h5 class="card-title">
-            <span style="width: 100%;" class="m-1 badge bg-dark">Year: <span class="badge bg-secondary"> {{ student.getYear }}</span></span>
-              <br />
-              <span style="width: 100%;" class="m-1 badge bg-dark">Major: <span class="badge bg-secondary"> {{ student.major }}</span></span>
-              <br />
-              <span style="width: 100%;" class="m-1 badge bg-dark">Average Grade: <span class="badge bg-secondary"> {{ student.average_grade }}</span></span>
+            <span style="width: 100%;" class="m-1 badge bg-dark">Year: <span class="badge bg-secondary"> {{
+                student.getYear }}</span></span>
+            <br />
+            <span style="width: 100%;" class="m-1 badge bg-dark">Major: <span class="badge bg-secondary"> {{
+                student.major }}</span></span>
+            <br />
+            <span style="width: 100%;" class="m-1 badge bg-dark">Average Grade: <span class="badge bg-secondary"> {{
+                student.average_grade }}</span></span>
           </h5>
           <a href="{% url 'main:delete' student.id 'student' %}">
             <button type="button" class="btn btn-outline-danger">Expel</button>
@@ -69,10 +74,11 @@
           {% if school.checkTokens > 0 %}
           <button class="toggler btn btn-outline-primary" id="student">Admit</button>
           {% else %}
-                  <span style="width: 100%;" class="badge bg-dark">No <i class="bi bi-coin text-warning"></i> left!</span>
-                  <br />
-                  <span style="width: 100%;" class="badge bg-dark">Advance Year for more <i class="bi bi-coin text-warning"></i>!</span>
-                  {% endif %}
+          <span style="width: 100%;" class="badge bg-dark">No <i class="bi bi-coin text-warning"></i> left!</span>
+          <br />
+          <span style="width: 100%;" class="badge bg-dark">Advance Year for more <i
+              class="bi bi-coin text-warning"></i>!</span>
+          {% endif %}
         </div>
       </div>
     </div>

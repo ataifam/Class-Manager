@@ -9,25 +9,30 @@
   {% load bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %}
   <style>
     .title-header {
-    text-decoration:none;
+      text-decoration: none;
     }
+
     .title-header:hover {
-      color:whitesmoke;
+      color: whitesmoke;
       transition: all .3s ease-out;
     }
+
     .col-header {
-    text-decoration:underline;
+      text-decoration: underline;
     }
+
     .col-header:hover {
-      color:blue;
+      color: blue;
       transition: all .3s ease-out;
     }
+
     .sm-button {
       --bs-btn-font-size: .1rem;
     }
+
     .token-display:hover {
       text-decoration: none;
-      cursor:text;
+      cursor: text;
     }
   </style>
 </head>
@@ -104,12 +109,14 @@
     {% if request.user.is_authenticated %}
     <br />
     <div class="row g-2 justify-content-evenly text-center">
-      <a class="col-2" href="{% url 'main:nextYear' %}"><button type="button" class="btn btn-outline-primary rounded-pill">Advance Year</button></a>
-      <p class="col-1 rounded-pill btn bg-warning text-dark token-display"><i class="bi bi-coin"> {{school.checkTokens}}</i></p>
+      <a class="col-2" href="{% url 'main:nextYear' %}"><button type="button"
+          class="btn btn-outline-primary rounded-pill">Advance Year</button></a>
+      <p class="col-1 rounded-pill btn bg-warning text-dark token-display"><i class="bi bi-coin">
+          {{school.checkTokens}}</i></p>
     </div>
-      <hr>
-      {% endif %}
-      <br />
+    <hr>
+    {% endif %}
+    <br />
     {% block content %}{% endblock %}
   </div>
 </body>

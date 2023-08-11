@@ -17,13 +17,13 @@ class TeacherForm(forms.ModelForm):
     class Meta:
         model = Teacher
         fields = '__all__'
-        exclude = ['user', 'subject']
+        exclude = ['user', 'subject', 'salary']
 
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = '__all__'
-        exclude = ['user', 'major']
+        exclude = ['user', 'major', 'year', 'average_grade']
 
 class ClassForm(forms.ModelForm):
     class Meta:

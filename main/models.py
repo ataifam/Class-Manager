@@ -51,8 +51,17 @@ class Teacher(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, blank=True, null=True)
-    skill = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)], blank=True, null=True)
     salary = models.IntegerField(validators=[MinValueValidator(1000), MaxValueValidator(999999)], blank=True, null=True)
+
+    SKILL = [
+        (1, 'Lecturer'),
+        (2, 'Senior Lecturer'),
+        (3, 'Assistant Professor'),
+        (4, 'Associate Professor'),
+        (5, 'Professor'),
+    ]
+
+    skill = models.IntegerField(choices=SKILL, default=1, blank=True, null=True)
 
     def __str__(self):
         return (
@@ -70,8 +79,8 @@ class Student(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     major = models.ForeignKey(Subject, on_delete=models.CASCADE, blank=True, null=True)
-    year = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(4)], blank=True, null=True)
-    average_grade = models.CharField(max_length=1)
+    year = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(4)], blank=True, null=True, default=0)
+    average_grade = models.CharField(max_length=1, default='C')
 
     def __str__(self):
         return (

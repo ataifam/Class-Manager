@@ -15,15 +15,19 @@
         <div class="col-2">
             <div id="{{subject.id}}" class="card mb-3" style="max-width: 18rem;">
                 <div class="card-header bg-primary">
-                    <h5><a class="title-header link-dark bg-primary fw-medium" href="{% url 'main:building' subject.id %}">{{subject|capfirst}}</a></h5>
+                    <h5><a class="title-header link-dark bg-primary fw-medium"
+                            href="{% url 'main:building' subject.id %}">{{subject|capfirst}}</a></h5>
                 </div>
                 <div class="card-body">
                     <h5 class="card-title">
-                        <span style="width: 100%;" class="m-1 badge bg-dark">Classes: <span class="badge bg-secondary"> {{ subject.class_set.count }}</span></span>
-              <br />
-              <span style="width: 100%;" class="m-1 badge bg-dark">Faculty: <span class="badge bg-secondary"> {{ subject.teacher_set.count }}</span></span>
-              <br />
-              <span style="width: 100%;" class="m-1 badge bg-dark">Students: <span class="badge bg-secondary"> {{ subject.student_set.count }}</span></span>
+                        <span style="width: 100%;" class="m-1 badge bg-dark">Classes: <span class="badge bg-secondary">
+                                {{ subject.class_set.count }}</span></span>
+                        <br />
+                        <span style="width: 100%;" class="m-1 badge bg-dark">Faculty: <span class="badge bg-secondary">
+                                {{ subject.teacher_set.count }}</span></span>
+                        <br />
+                        <span style="width: 100%;" class="m-1 badge bg-dark">Students: <span class="badge bg-secondary">
+                                {{ subject.student_set.count }}</span></span>
                     </h5>
                     <a href="{% url 'main:delete' subject.id 'subject' %}">
                         <button type="button" class="btn btn-outline-danger">Demolish</button>
@@ -44,15 +48,20 @@
         <div class="col-2">
             <div id="{{class.id}}" class="card mb-3" style="max-width: 18rem;">
                 <div class="card-header bg-primary">
-                    <h5><a class="title-header link-dark bg-primary fw-medium" href="{% url 'main:class' class.name %}">{{class.name|capfirst}}</a></h5>
+                    <h5><a class="title-header link-dark bg-primary fw-medium"
+                            href="{% url 'main:class' class.name %}">{{class.name|capfirst}}</a></h5>
                 </div>
                 <div class="card-body">
                     <h5 class="card-title">
-                        <span style="width: 100%;" class="m-1 badge bg-dark">Faculty: <span class="badge bg-secondary"> <a class="col-header link-light" href="{% url 'main:teacher' class.teacher.id %}">{{ class.teacher }}</a></span></span>
-              <br />
-              <span style="width: 100%;" class="m-1 badge bg-dark">Room <span class="badge bg-secondary"> {{ class.room }}</span></span>
-              <br />
-              <span style="width: 100%;" class="m-1 badge bg-dark">Students: <span class="badge bg-secondary"> {{ class.students.count }}</span></span>
+                        <span style="width: 100%;" class="m-1 badge bg-dark">Faculty: <span class="badge bg-secondary">
+                                <a class="col-header link-light" href="{% url 'main:teacher' class.teacher.id %}">{{
+                                    class.teacher }}</a></span></span>
+                        <br />
+                        <span style="width: 100%;" class="m-1 badge bg-dark">Room <span class="badge bg-secondary"> {{
+                                class.room }}</span></span>
+                        <br />
+                        <span style="width: 100%;" class="m-1 badge bg-dark">Students: <span class="badge bg-secondary">
+                                {{ class.students.count }}</span></span>
                     </h5>
                     <a href="{% url 'main:delete' class.id 'class' %}">
                         <button type="button" class="btn btn-outline-danger">Remove</button>
@@ -73,16 +82,23 @@
         <div class="col-2">
             <div id="{{teacher.id}}" class="card mb-3" style="max-width: 18rem;">
                 <div class="card-header bg-primary">
-                    <h5><a class="title-header link-dark bg-primary fw-medium" href="{% url 'main:teacher' teacher.id %}">{{teacher|title}}</a></h5>
+                    <h5><a class="title-header link-dark bg-primary fw-medium"
+                            href="{% url 'main:teacher' teacher.id %}">{{teacher|title}}</a></h5>
                 </div>
                 <div class="card-body">
                     <h5 class="card-title">
-                        <span style="width: 100%;" class="m-1 badge bg-dark">Specialization: <span class="badge bg-secondary"> {{ teacher.subject }}</span></span>
-              <br />
-              <span style="width: 100%;" class="m-1 badge bg-dark">Skill: <span class="badge bg-secondary"> {{ teacher.skill }}</span> <a class="float-end" href="{% url 'main:train' teacher.id %}"><badge class="badge bg-warning"><i class="bi bi-briefcase-fill"></i></badge></a></span>
-              <br />
-              <span style="width: 100%;" class="m-1 badge bg-dark">Salary: <span class="badge bg-secondary"> {{ teacher.salary }}</span></span>
+                        <span style="width: 100%;" class="m-1 badge bg-dark">{{ teacher.get_skill_display }}</span>
+                        <br />
+                        <span style="width: 100%;" class="m-1 badge bg-dark">Specialization: <span
+                                class="badge bg-secondary"> {{ teacher.subject }}</span></span>
+                        <br />
+                        <span style="width: 100%;" class="m-1 badge bg-dark">Salary: <span class="badge bg-secondary">
+                                {{ teacher.salary }}</span></span>
                     </h5>
+                    {% if school.checkTokens > 0 %}
+                    <a class="me-2" href="{% url 'main:train' teacher.id %}"><button type="button"
+                            class="btn btn-outline-warning">Train</button></a>
+                    {% endif %}
                     <a href="{% url 'main:delete' teacher.id 'teacher' %}">
                         <button type="button" class="btn btn-outline-danger">Fire</button>
                     </a>
@@ -103,15 +119,19 @@
         <div class="col-2">
             <div id="{{teacher.id}}" class="card mb-3" style="max-width: 18rem;">
                 <div class="card-header bg-primary">
-                    <h5><a class="title-header link-dark bg-primary fw-medium" href="{% url 'main:student' student.id %}">{{student|title}}</a></h5>
+                    <h5><a class="title-header link-dark bg-primary fw-medium"
+                            href="{% url 'main:student' student.id %}">{{student|title}}</a></h5>
                 </div>
                 <div class="card-body">
                     <h5 class="card-title">
-                        <span style="width: 100%;" class="m-1 badge bg-dark">Year: <span class="badge bg-secondary"> {{ student.getYear }}</span></span>
+                        <span style="width: 100%;" class="m-1 badge bg-dark">Year: <span class="badge bg-secondary"> {{
+                                student.getYear }}</span></span>
                         <br />
-                        <span style="width: 100%;" class="m-1 badge bg-dark">Major: <span class="badge bg-secondary"> {{ student.major }}</span></span>
+                        <span style="width: 100%;" class="m-1 badge bg-dark">Major: <span class="badge bg-secondary"> {{
+                                student.major }}</span></span>
                         <br />
-                        <span style="width: 100%;" class="m-1 badge bg-dark">Average Grade: <span class="badge bg-secondary"> {{ student.average_grade }}</span></span>
+                        <span style="width: 100%;" class="m-1 badge bg-dark">Average Grade: <span
+                                class="badge bg-secondary"> {{ student.average_grade }}</span></span>
                     </h5>
                     <a href="{% url 'main:delete' student.id 'student' %}">
                         <button type="button" class="btn btn-outline-danger">Expel</button>
