@@ -14,10 +14,12 @@ class SubjectForm(forms.ModelForm):
         exclude = ['user']
 
 class TeacherForm(forms.ModelForm):
+    
     class Meta:
         model = Teacher
         fields = '__all__'
         exclude = ['user', 'subject', 'salary']
+        widgets = {'skill': forms.Select(attrs={'class': "skill_toggler"}, choices=Teacher.SKILL)}
 
 class StudentForm(forms.ModelForm):
     class Meta:

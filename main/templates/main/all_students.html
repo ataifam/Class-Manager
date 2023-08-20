@@ -1,6 +1,7 @@
 {% extends "main/base.html" %}
 {% block title %}Students{% endblock %}
 {% block content %}
+{% load humanize %}
 
 {% if request.user.is_authenticated %}
 <h1>
@@ -10,12 +11,15 @@
   <center>{{filter|capfirst}} Students</center>
   {% endif %}
 </h1>
-
+<br>
+{% include 'main/menubar.html' %}
 <br>
 <div class="container text-center">
   <div class="row g-2 justify-content-center">
     <div class="col-4 m-2 shadow-sm p-3 mb-5 bg-body-tertiary rounded bg-light">
       <h3>Student Count: {{students.count}}</h3>
+      <br />
+      <h3>Tuition: ${{school.tuition|intcomma}}</h3>
     </div>
     <div
       class="col-4 m-2 shadow-sm p-3 mb-5 bg-body-tertiary rounded bg-light align-items-center justify-content-center">
@@ -102,6 +106,7 @@
               </datalist>
               <br />
               {{form}}
+              <div class="badge bg-warning ms-2"><i class="bi bi-coin"> 1</i></div>
               <br />
               <br />
               <button class="btn btn-outline-success" name="student_form" type="submit">Submit</button>

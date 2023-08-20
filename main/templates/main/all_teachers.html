@@ -1,6 +1,7 @@
 {% extends "main/base.html" %}
 {% block title %}Teachers{% endblock %}
 {% block content %}
+{% load humanize %}
 
 {% if request.user.is_authenticated %}
 <h1>
@@ -10,7 +11,8 @@
   <center>{{filter|capfirst}} Teachers</center>
   {% endif %}
 </h1>
-
+<br>
+{% include 'main/menubar.html' %}
 <br>
 <div class="container text-center">
   <div class="row g-2 justify-content-center">
@@ -19,7 +21,7 @@
     </div>
     <div
       class="col-4 m-2 shadow-sm p-3 mb-5 bg-body-tertiary rounded bg-light align-items-center justify-content-center">
-      <h3>Average Salary: ${{avgSalary}}</h3>
+      <h3>Average Salary: ${{avgSalary|intcomma}}</h3>
       <br />
       <h3>Average Skill: {{avgSkill}} / 5</h3>
       </a>
@@ -54,7 +56,7 @@
             <br />
             <span style="width: 100%;" class="m-1 badge bg-dark">Specialization: <span class="badge bg-secondary"> {{teacher.subject}}</span></span>
             <br />
-            <span style="width: 100%;" class="m-1 badge bg-dark">Salary: <span class="badge bg-secondary"> {{teacher.salary}}</span></span>
+            <span style="width: 100%;" class="m-1 badge bg-dark">Salary: <span class="badge bg-secondary"> {{teacher.salary|intcomma}}</span></span>
           </h5>
           {% if school.checkTokens > 0 %}
           <a class="me-2" href="{% url 'main:train' teacher.id %}"><button type="button"
@@ -107,6 +109,8 @@
               </datalist>
               <br />
               {{form}}
+              <div class="badge bg-success ms-2" id="price">$30,000</div>
+              <div class="badge bg-warning ms-1"><i class="bi bi-coin"> 1</i></div>
               <br />
               <br />
               <button class="btn btn-outline-success" type="submit">Submit</button>
@@ -135,11 +139,30 @@
     }
   }
 
+  function showPrice(value) {
+    if(value == 1){
+      document.querySelector("#price").innerHTML = "$30,000"
+    } else if (value == 2){
+      document.querySelector("#price").innerHTML = "$40,000"
+    } else if (value == 3){
+      document.querySelector("#price").innerHTML = "$60,000"
+    } else if (value == 4){
+      document.querySelector("#price").innerHTML = "$80,000"
+    } else if (value == 5){
+      document.querySelector("#price").innerHTML = "$100,000"
+    }
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".toggler").forEach((el) => {
       el.onclick = (el) => {
         toggleEditSection("create_" + el.target.id);
       };
+      document.querySelectorAll(".skill_toggler").forEach((el) => {
+      el.onchange = (el) => {
+        showPrice(el.target.value);
+      };
+    });
     });
 
     document.querySelector("#filter").onchange = (el) => {

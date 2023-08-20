@@ -12,7 +12,7 @@ class School(models.Model):
     year = models.IntegerField(default=1)
     actionTokens = models.IntegerField(default=3)
     money = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(1000000000)], blank=True, null=True, default=500000)
-    tuition = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100000)], blank=True, null=True, default=10000)
+    tuition = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100000)], blank=True, null=True, default=50000)
 
     #override save method to provide default for player name
     def setName(self, *args, **kwargs):

@@ -1,6 +1,7 @@
 {% extends "main/base.html" %}
 {% block title %}{{teacher}}{% endblock %}
 {% block content %}
+{% load humanize %}
 
 {% if request.user.is_authenticated %}
 <a href="{% url 'main:home' %}">Go Home</a>
@@ -8,6 +9,8 @@
 <h1>
   <center>{{teacher|title}}</center>
 </h1>
+<br>
+{% include 'main/menubar.html' %}
 <br>
 <div class="container text-center">
   <div class="row g-2 justify-content-center">
@@ -18,7 +21,7 @@
     </div>
     <div
       class="col-4 m-2 shadow-sm p-3 mb-5 bg-body-tertiary rounded bg-light align-items-center justify-content-center">
-      <h3>Salary: ${{teacher.salary}}</h3>
+      <h3>Salary: ${{teacher.salary|intcomma}}</h3>
       <br>
       {% if school.checkTokens > 0 %}
       <a class="me-2" href="{% url 'main:train' teacher.id %}"><button type="button"
@@ -47,11 +50,9 @@
         </div>
         <div class="card-body">
           <h5 class="card-title">
-            <span style="width: 100%;" class="m-1 badge bg-dark">Room <span class="badge bg-secondary"> {{ class.room
-                }}</span></span>
+            <span style="width: 100%;" class="m-1 badge bg-dark">Room <span class="badge bg-secondary"> {{class.room}}</span></span>
             <br />
-            <span style="width: 100%;" class="m-1 badge bg-dark">Students: <span class="badge bg-secondary"> {{
-                class.students.count }}</span></span>
+            <span style="width: 100%;" class="m-1 badge bg-dark">Students: <span class="badge bg-secondary"> {{class.students.count}}</span></span>
           </h5>
           <a href="{% url 'main:delete' class.id 'class' %}">
             <button type="button" class="btn btn-outline-danger">Remove</button>
@@ -81,6 +82,8 @@
               </select></datalist>
             <br />
             {{form}}
+            <div class="badge bg-success ms-2" id="price">${{teacher.salary|intcomma}}</div>
+            <div class="badge bg-warning ms-1"><i class="bi bi-coin"> 1</i></div>
             <br>
             <br>
             <button class="btn btn-outline-success" type="Submit">Submit</button>
@@ -90,5 +93,29 @@
     </div>
   </div>
 </div>
+
+<script>
+  function showPrice(value) {
+    if(value == 1){
+      document.querySelector("#price").innerHTML = "$30,000"
+    } else if (value == 2){
+      document.querySelector("#price").innerHTML = "$40,000"
+    } else if (value == 3){
+      document.querySelector("#price").innerHTML = "$60,000"
+    } else if (value == 4){
+      document.querySelector("#price").innerHTML = "$80,000"
+    } else if (value == 5){
+      document.querySelector("#price").innerHTML = "$100,000"
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".skill_toggler").forEach((el) => {
+      el.onchange = (el) => {
+        showPrice(el.target.value);
+      };
+    });
+  });
+</script>
 
 {% endif %} {% endblock %}

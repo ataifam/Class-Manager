@@ -1,3 +1,4 @@
+{% load humanize %}
 <!DOCTYPE html>
 <html>
 
@@ -108,19 +109,7 @@
     {% endif %}
     {% if request.user.is_authenticated %}
     <br />
-    <div class="row g-2 justify-content-evenly text-center">
-      <a class="col-2" href="{% url 'main:nextYear' %}"><button type="button"
-          class="btn btn-outline-primary rounded-pill">Advance Year</button></a>
-      <p class="col-2">Funds: ${{school.money}}</p>
-      <p class="col-2">Year: {{school.year}}</p>
-      <p class="col-2">Estimated EOY Profit/Loss: ${{costs}}</p>
-      <div class="col-2">
-      <p class="rounded-pill btn bg-warning text-dark token-display"><i class="bi bi-coin">
-          {{school.checkTokens}}</i></p></div>
-    </div>
-    <hr>
     {% endif %}
-    <br />
     {% block content %}{% endblock %}
   </div>
 </body>

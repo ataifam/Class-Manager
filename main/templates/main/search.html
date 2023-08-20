@@ -6,6 +6,9 @@
 <center>
     <h3>Results</h3>
 </center>
+<br>
+{% include 'main/menubar.html' %}
+<br>
 {% if subjects %}
 <h4>Subjects</h4>
 <hr>
@@ -124,14 +127,12 @@
                 </div>
                 <div class="card-body">
                     <h5 class="card-title">
-                        <span style="width: 100%;" class="m-1 badge bg-dark">Year: <span class="badge bg-secondary"> {{
-                                student.getYear }}</span></span>
+                        <span style="width: 100%;" class="m-1 badge bg-dark">Year: <span class="badge bg-secondary"> {{student.getYear}}</span></span>
                         <br />
-                        <span style="width: 100%;" class="m-1 badge bg-dark">Major: <span class="badge bg-secondary"> {{
-                                student.major }}</span></span>
+                        <span style="width: 100%;" class="m-1 badge bg-dark">Major: <span class="badge bg-secondary"> {{student.major}}</span></span>
                         <br />
                         <span style="width: 100%;" class="m-1 badge bg-dark">Average Grade: <span
-                                class="badge bg-secondary"> {{ student.average_grade }}</span></span>
+                                class="badge bg-secondary"> {{student.average_grade}}</span></span>
                     </h5>
                     <a href="{% url 'main:delete' student.id 'student' %}">
                         <button type="button" class="btn btn-outline-danger">Expel</button>

@@ -1,0 +1,16 @@
+{% load humanize %}
+<div class="row g-2 text-center">
+    <div class="badge rounded-pill bg-light text-dark shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+    <a class="col-2 m-2 d-inline-flex justify-content-center title-header" href="{% url 'main:nextYear' %}"><button type="button"
+        class="btn btn-primary rounded-pill">Advance Year</button></a>
+    <h5 class="col-2 m-2 d-inline-flex justify-content-center"><p class="btn btn-success badge rounded-pill text-light token-display float-center p-2" data-bs-toggle="tooltip" data-bs-title="Cash: Your current cash earned from student tuition to allocate toward school operations!"><i class="bi bi-cash">  ${{school.money|intcomma}}</i></p></h5>
+    <h5 class="col-2 m-2 d-inline-flex justify-content-center">Year: {{school.year}}</h5>
+    <h5 class="col-2 m-2 d-inline-flex justify-content-center"><p class="btn btn-success badge rounded-pill text-light token-display float-center p-2" data-bs-toggle="tooltip" data-bs-title="Profit/Loss: Expected profit or loss at the end of the year!"><i class="bi bi-graph-up-arrow">  Profit/Loss: ${{costs|intcomma}}</i></p></h5>
+    <h5 class="col-2 m-2 d-inline-flex justify-content-center"><p class="btn btn-warning badge rounded-pill text-dark token-display float-center p-2" data-bs-toggle="tooltip" data-bs-title="Action Tokens: Creation/training of teachers and students require action tokens!"><i class="bi bi-coin">
+        {{school.checkTokens}}</i></p></h5>
+  </div></div>
+
+  <script>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+  </script>
