@@ -2,6 +2,7 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
+{% load static %}
 <h1><center>Settings</center></h1>
 <br>
 {% include 'main/menubar.html' %}
@@ -34,28 +35,5 @@
     </div>
 </div>
 <br>
-
-<script>
-    function toggleEditSection(id) {
-      let category;
-      if ((category = document.getElementById(id)) != null) {
-        if (category.style.display == "none") {
-          category.style.display = "block";
-          document.querySelector("#start_" + id).style.display = "none";
-        } else {
-          category.style.display = "none";
-          document.querySelector("#start_" + id).style.display = "block";
-        }
-      }
-    }
-  
-    document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll(".toggler").forEach((el) => {
-        el.onclick = (el) => {
-          toggleEditSection("create_" + el.target.id);
-        };
-      });
-    });
-  </script>
 
 {% endblock %}

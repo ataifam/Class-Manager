@@ -1,0 +1,26 @@
+.title-header {
+    text-decoration: none;
+  }
+
+  .title-header:hover {
+    color: whitesmoke;
+    transition: all .3s ease-out;
+  }
+
+  .col-header {
+    text-decoration: underline;
+  }
+
+  .col-header:hover {
+    color: blue;
+    transition: all .3s ease-out;
+  }
+
+  .sm-button {
+    --bs-btn-font-size: .1rem;
+  }
+
+  .token-display:hover {
+    text-decoration: none;
+    cursor: text;
+  }

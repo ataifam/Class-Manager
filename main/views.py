@@ -64,6 +64,7 @@ def search(request):
             students = (Student.objects.filter(user_id=user.id, first_name__icontains=q) | Student.objects.filter(user_id=user.id, last_name__icontains=q))[0:15]
     else:
         messages.error(request, "Invalid search entry. Please try again!")
+        return redirect(request.META.get('HTTP_REFERER', '/'))
 
     return render(request, "main/search.html", {
         'school': user_school,

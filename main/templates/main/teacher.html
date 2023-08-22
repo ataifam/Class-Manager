@@ -2,6 +2,7 @@
 {% block title %}{{teacher}}{% endblock %}
 {% block content %}
 {% load humanize %}
+{% load static %}
 
 {% if request.user.is_authenticated %}
 <a href="{% url 'main:home' %}">Go Home</a>
@@ -83,7 +84,6 @@
             <br />
             {{form}}
             <div class="badge bg-success ms-2" id="price">${{teacher.salary|intcomma}}</div>
-            <div class="badge bg-warning ms-1"><i class="bi bi-coin"> 1</i></div>
             <br>
             <br>
             <button class="btn btn-outline-success" type="Submit">Submit</button>
@@ -94,28 +94,5 @@
   </div>
 </div>
 
-<script>
-  function showPrice(value) {
-    if(value == 1){
-      document.querySelector("#price").innerHTML = "$30,000"
-    } else if (value == 2){
-      document.querySelector("#price").innerHTML = "$40,000"
-    } else if (value == 3){
-      document.querySelector("#price").innerHTML = "$60,000"
-    } else if (value == 4){
-      document.querySelector("#price").innerHTML = "$80,000"
-    } else if (value == 5){
-      document.querySelector("#price").innerHTML = "$100,000"
-    }
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll(".skill_toggler").forEach((el) => {
-      el.onchange = (el) => {
-        showPrice(el.target.value);
-      };
-    });
-  });
-</script>
 
 {% endif %} {% endblock %}
