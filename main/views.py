@@ -115,7 +115,7 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, 'Logged in successfully!')
-                return redirect('main:home')
+                return redirect('main:settings')
             else:
                 messages.error(request, 'Error logging in. Please try again.')
                 return redirect('main:login_view')

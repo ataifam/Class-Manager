@@ -3,31 +3,34 @@
 
 {% block content %}
 {% load static %}
-<h1><center>Settings</center></h1>
+<h1><center>School Information</center></h1>
 <br>
 {% include 'main/menubar.html' %}
 <br>
 <div class="container text-center">
-    <div class="row">
-        <div class="col-md-4 ms-auto">
-            <div id="school-container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div id="school-container" class="shadow-sm p-3 mb-5 bg-body-tertiary rounded bg-light">
                 {% if school %}
-                <h5>{{school.name}}</h5>
+                <h5>School Name: {{school.name}}</h5>
                 <h5>Superintendent: {{school.player_name}}</h5>
                 <h5>Year: {{school.year}}</h5>
 
                 <div id="start_create_school">
-                    <button class="toggler btn btn-outline-primary" id="school">Edit</button>
+                    <button class="m-2 toggler btn btn-outline-primary" id="school">Edit</button>
                     <a href="{% url 'main:delete' school.id 'school' %}">
-                        <button type="button" class="btn btn-outline-danger">Start over</button>
+                        <button type="button" class="m-2 btn btn-outline-danger">Start over</button>
                     </a>
+                    <a href="{% url 'main:home' %}"><button class="m-2 toggler btn btn-outline-primary">Play</button></a>
                 </div>
                 <div id="create_school" style="display: none">
                     <form method="POST" action="">
                         {% csrf_token %} {{schoolForm}}
-                        <button name="school_form" class="btn btn-outline-success" type="submit">Submit</button>
-                    </form>
-                    <button class="toggler btn btn-outline-danger" id="school">Cancel</button>
+                        <br>
+                        <br>
+                        <button name="school_form" class="m-2 btn btn-outline-success" type="submit">Submit</button>
+                        </form>
+                        <button class="m-2 toggler btn btn-outline-danger" id="school">Cancel</button>
                 </div>
                 {% endif %}
             </div>
