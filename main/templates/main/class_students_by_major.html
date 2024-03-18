@@ -21,7 +21,7 @@
             <span style="width: 100%;" class="m-1 badge bg-dark">Major: <span class="badge bg-secondary">
                 {{student.major}}</span></span>
             <br />
-            <span style="width: 100%;" class="m-1 badge bg-dark">Average Grade: <span class="badge bg-secondary"> {{student.average_grade}}</span></span>
+            <span style="width: 100%;" class="m-1 badge bg-dark">Average Grade: <span class="badge bg-secondary"> {{student.getLetterGrade}}</span></span>
           </h5>
           <form method="POST" action="">
             {% csrf_token %}
@@ -63,7 +63,7 @@
             <span style="width: 100%;" class="m-1 badge bg-dark">Major: <span class="badge bg-secondary">
                 {{student.major}}</span></span>
             <br />
-            <span style="width: 100%;" class="m-1 badge bg-dark">Average Grade: <span class="badge bg-secondary"> {{student.average_grade}}</span></span>
+            <span style="width: 100%;" class="m-1 badge bg-dark">Average Grade: <span class="badge bg-secondary"> {{student.getLetterGrade}}</span></span>
           </h5>
           <form method="POST" action="" name="registration">
             {% csrf_token %}

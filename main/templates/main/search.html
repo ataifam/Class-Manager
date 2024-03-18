@@ -58,11 +58,9 @@
                 <div class="card-body">
                     <h5 class="card-title">
                         <span style="width: 100%;" class="m-1 badge bg-dark">Faculty: <span class="badge bg-secondary">
-                                <a class="col-header link-light" href="{% url 'main:teacher' class.teacher.id %}">{{
-                                    class.teacher }}</a></span></span>
+                                <a class="col-header link-light" href="{% url 'main:teacher' class.teacher.id %}">{{class.teacher }}</a></span></span>
                         <br />
-                        <span style="width: 100%;" class="m-1 badge bg-dark">Room <span class="badge bg-secondary"> {{
-                                class.room }}</span></span>
+                        <span style="width: 100%;" class="m-1 badge bg-dark">Room <span class="badge bg-secondary"> {{class.room }}</span></span>
                         <br />
                         <span style="width: 100%;" class="m-1 badge bg-dark">Students: <span class="badge bg-secondary">
                                 {{ class.students.count }}</span></span>
@@ -93,7 +91,7 @@
                     <h5 class="card-title">
                         <span style="width: 100%;" class="m-1 badge bg-dark">{{ teacher.get_skill_display }}</span>
                         <br />
-                        <span style="width: 100%;" class="m-1 badge bg-dark">Specialization: <span
+                        <span style="width: 100%;" class="m-1 badge bg-dark">Focus: <span
                                 class="badge bg-secondary"> {{ teacher.subject }}</span></span>
                         <br />
                         <span style="width: 100%;" class="m-1 badge bg-dark">Salary: <span class="badge bg-secondary">
@@ -133,7 +131,7 @@
                         <span style="width: 100%;" class="m-1 badge bg-dark">Major: <span class="badge bg-secondary"> {{student.major}}</span></span>
                         <br />
                         <span style="width: 100%;" class="m-1 badge bg-dark">Average Grade: <span
-                                class="badge bg-secondary"> {{student.average_grade}}</span></span>
+                                class="badge bg-secondary"> {{student.getLetterGrade}}</span></span>
                     </h5>
                     <a href="{% url 'main:delete' student.id 'student' %}">
                         <button type="button" class="btn btn-outline-danger">Expel</button>

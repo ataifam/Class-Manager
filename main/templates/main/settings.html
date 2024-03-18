@@ -13,19 +13,18 @@
             <div id="school-container" class="shadow-sm p-3 mb-5 bg-body-tertiary rounded bg-light">
                 {% if school %}
                 <h5>School Name: {{school.name}}</h5>
-                <h5>Superintendent: {{school.player_name}}</h5>
+                <h5>Superintendent: {{school.username}}</h5>
                 <h5>Year: {{school.year}}</h5>
+                <h5>Tuition Amount: ${{school.tuition}}</h5>
 
                 <div id="start_create_school">
                     <button class="m-2 toggler btn btn-outline-primary" id="school">Edit</button>
-                    <a href="{% url 'main:delete' school.id 'school' %}">
-                        <button type="button" class="m-2 btn btn-outline-danger">Start over</button>
-                    </a>
-                    <a href="{% url 'main:home' %}"><button class="m-2 toggler btn btn-outline-primary">Play</button></a>
+                    <a href="{% url 'main:home' %}"><button class="m-2 toggler btn btn-outline-success">Play</button></a>
+                    <a href="{% url 'main:delete' school.id 'school' %}"><button type="button" class="m-2 btn btn-outline-danger">Start over</button></a>
                 </div>
                 <div id="create_school" style="display: none">
                     <form method="POST" action="">
-                        {% csrf_token %} {{schoolForm}}
+                        {% csrf_token %} {{schoolForm.as_div}}
                         <br>
                         <br>
                         <button name="school_form" class="m-2 btn btn-outline-success" type="submit">Submit</button>

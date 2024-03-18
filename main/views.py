@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import SchoolForm, SubjectForm, ClassForm, StudentForm, TeacherForm, LoginForm
+from .forms import SubjectForm, ClassForm, StudentForm, TeacherForm, LoginForm, SignUpForm
 from .models import School, Subject, Class, Student, Teacher
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .gameFunctions import computeAvgSalary, computeAvgSkill, computeAvgGradeDist, computeFinancials
@@ -11,16 +11,15 @@ from .gameFunctions import computeAvgSalary, computeAvgSkill, computeAvgGradeDis
 # Create your views here.
 
 def home(request):
-    user = get_object_or_404(User, id=request.user.id)
-    user_school = get_object_or_404(School, user_id=user.id)
-    subjects = Subject.objects.filter(user_id=user.id)
-    classes = Class.objects.filter(user_id=user.id)
-    teachers = Teacher.objects.filter(user_id=user.id)
-    students = Student.objects.filter(user_id=user.id)
+    school = get_object_or_404(School, id=request.user.id)
+    subjects = Subject.objects.filter(school_id=school.id)
+    classes = Class.objects.filter(school_id=school.id)
+    teachers = Teacher.objects.filter(school_id=school.id)
+    students = Student.objects.filter(school_id=school.id)
     subjectForm = SubjectForm()
 
     # compute school financial information for menubar
-    costs = computeFinancials(user, user_school)
+    costs = computeFinancials(school)
     
     if request.method == 'POST':
             # if post request sent, store values in subject form
@@ -28,7 +27,7 @@ def home(request):
             if subjectForm.is_valid():
                 subject = subjectForm.save(commit=False)
                 # assign subject's user to current user
-                subject.user = user
+                subject.school = school
                 subject.save()
                 messages.success(request, "Building successfully created!")
                 return redirect('main:home')
@@ -36,7 +35,7 @@ def home(request):
             return redirect('main:home')
 
     return render(request, "main/home.html", {
-        'school': user_school,
+        'school': school,
         'subjects': subjects,
         'classes': classes,
         'teachers': teachers,
@@ -47,27 +46,26 @@ def home(request):
 
 @login_required(login_url="main:login_view")
 def search(request):
-    user = request.user
-    user_school = get_object_or_404(School, user_id=user.id)
+    school = get_object_or_404(School, id=request.user.id)
 
     # school financial information for user's school
-    costs = computeFinancials(user, user_school)
+    costs = computeFinancials(school)
 
     # store user's get request query in q if valid
     q = request.GET.get('q') if bool(request.GET.get('q', False)) else None
     if q is not None:
             # find at most 15 possible queries matching some part of q
-            subjects = Subject.objects.filter(user_id=user.id, name__icontains=q)[0:15]
-            classes = Class.objects.filter(user_id=user.id, name__icontains=q)[0:15]
+            subjects = Subject.objects.filter(school_id=school.id, name__icontains=q)[0:15]
+            classes = Class.objects.filter(school_id=school.id, name__icontains=q)[0:15]
             # search both first and last names of teachers and students
-            teachers = (Teacher.objects.filter(user_id=user.id, first_name__icontains=q) | Teacher.objects.filter(user_id=user.id, last_name__icontains=q))[0:15]
-            students = (Student.objects.filter(user_id=user.id, first_name__icontains=q) | Student.objects.filter(user_id=user.id, last_name__icontains=q))[0:15]
+            teachers = (Teacher.objects.filter(school_id=school.id, first_name__icontains=q) | Teacher.objects.filter(school_id=school.id, last_name__icontains=q))[0:15]
+            students = (Student.objects.filter(school_id=school.id, first_name__icontains=q) | Student.objects.filter(school_id=school.id, last_name__icontains=q))[0:15]
     else:
         messages.error(request, "Invalid search entry. Please try again!")
         return redirect(request.META.get('HTTP_REFERER', '/'))
 
     return render(request, "main/search.html", {
-        'school': user_school,
+        'school': school,
         'subjects': subjects,
         'classes': classes,
         'teachers': teachers,
@@ -77,25 +75,24 @@ def search(request):
 
 @login_required(login_url="main:login_view")
 def settings(request):
-    user = request.user
-    user_school = get_object_or_404(School, user_id=user.id)
-    schoolForm = SchoolForm(instance=user_school)
+    school = get_object_or_404(School, id=request.user.id)
+    schoolForm = SignUpForm(instance=school)
 
     # financial info for user's school
-    costs = computeFinancials(user, user_school)
+    costs = computeFinancials(school)
 
     if request.method == 'POST':
             # if post request used on this page, store values in school form
-            schoolForm = SchoolForm(instance=user_school, data=request.POST)
+            schoolForm = SignUpForm(instance=school, data=request.POST)
             if schoolForm.is_valid:
                 schoolForm.save()
                 messages.success(request, "School successfully edited!")
                 return redirect('main:home')
             messages.error(request, "An error has occured, please try again!")
-            return redirect('main:home')
+            return redirect('main:settings')
 
     return render(request, "main/settings.html", {
-        'school': user_school,
+        'school': school,
         'schoolForm': schoolForm,
         'costs': costs,
     })
@@ -125,11 +122,11 @@ def login_view(request):
     })
 
 def register_view(request):
-    form = UserCreationForm()
+    form = SignUpForm()
 
     if request.method == 'POST':
         # if post request used on this page store values in UCF
-        form = UserCreationForm(request.POST)
+        form = SignUpForm(request.POST)
         if form.is_valid():
             # save before authenticating
             form.save()
@@ -140,7 +137,7 @@ def register_view(request):
             user = authenticate(request, username=username, password=password)
             login(request, user)
             messages.success(request, 'Logged in successfully!')
-            return redirect('main:home')
+            return redirect('main:settings')
 
     return render(request, "main/register.html", {
         'form': form,
@@ -151,12 +148,12 @@ def logout_view(request):
         # logout user
         logout(request)
         messages.success(request, 'Logged out successfully.')
-        return redirect('main:login_view')
+        return school_id('main:login_view')
 
 
 @login_required(login_url="main:login_view")
 def delete(request, pk, option):
-    user = request.user
+    school = get_object_or_404(School, id=request.user.id)
     # delete path for all user's school objects; determine specific object to delete
     # by checking arguments
     if option == 'subject':
@@ -177,36 +174,33 @@ def delete(request, pk, option):
         messages.success(request, "Student successfully deleted!")
     elif option == 'school':
         school = get_object_or_404(School, id=pk)
-        school.name = "My New School"
-        # everything will cascade by deleting all subjects
-        Subject.objects.filter(user_id=user.id).delete()
-    return redirect('main:home')
+        school.startOver()
+    return redirect(request.META.get('HTTP_REFERER', '/'))
 
 @login_required(login_url="main:login_view")
 def building(request, pk):
-    user = get_object_or_404(User, id=request.user.id)
-    user_school = get_object_or_404(School, user_id=user.id)
-    subjects = Subject.objects.filter(user_id=user.id)
-    building = get_object_or_404(Subject, user=user.id, id=pk)
+    school = get_object_or_404(School, id=request.user.id)
+    subjects = Subject.objects.filter(school_id=school.id)
+    building = get_object_or_404(Subject, school_id=school.id, id=pk)
     classForm = ClassForm()
 
     # user's financial info for school
-    costs = computeFinancials(user, user_school)
+    costs = computeFinancials(school)
 
     if request.method == 'POST':
         # if post request used on this page, store values in class form
         classForm = ClassForm(request.POST)
         if classForm.is_valid():
-                    schoolClass = classForm.save(commit=False)
+                    newClass = classForm.save(commit=False)
                     # assign class' user to current user
-                    schoolClass.user = user
+                    newClass.school = school
                     # assign class' building to argument building
-                    schoolClass.building = building
-                    schoolClass.save()
+                    newClass.building = building
+                    newClass.save()
                     messages.success(request, "Class creation successful!")
 
     return render(request, "main/building.html", {
-        'school': user_school,
+        'school': school,
         'subject': building,
         'subjects': subjects,
         'form': classForm,
@@ -215,40 +209,39 @@ def building(request, pk):
 
 @login_required(login_url="main:login_view")
 def class_view(request, name):
-    user = get_object_or_404(User, id=request.user.id)
-    user_school = get_object_or_404(School, user_id=user.id)
-    subjects = Subject.objects.filter(user_id=user.id)
-    user_class = get_object_or_404(Class, user_id=user.id, name=name)
-    students = Student.objects.filter(user_id=user.id)
+    school = get_object_or_404(School, id=request.user.id)
+    subjects = Subject.objects.filter(school_id=school.id)
+    user_class = get_object_or_404(Class, school_id=school.id, name=name)
+    students = Student.objects.filter(school_id=school.id)
     teacherForm = TeacherForm()
     studentForm = StudentForm()
 
     # user's financial info for school
-    costs = computeFinancials(user, user_school)
+    costs = computeFinancials(school)
 
     if request.method == 'POST':
         # register student for class button clicked
         if 'register' in request.POST:
             pk = request.POST.get('register', '')
-            student = get_object_or_404(Student, user_id=user.id, id=pk)
+            student = get_object_or_404(Student, school_id=school.id, id=pk)
             user_class.students.add(student)
             messages.success(request, 'Student registered successfully!')
         # deregister student for class button clicked
         elif 'unregister' in request.POST:
             pk = request.POST.get('unregister', '')
-            student = get_object_or_404(Student, user_id=user.id, id=pk)
+            student = get_object_or_404(Student, school_id=school.id, id=pk)
             user_class.students.remove(student)
             messages.success(request, 'Student unregistered successfully!')
         elif 'substitute' in request.POST:
             pk = request.POST.get('substitute', '')
-            teacher = get_object_or_404(Teacher, user_id=user.id, id=pk)
+            teacher = get_object_or_404(Teacher, school_id=school.id, id=pk)
             user_class.teacher = teacher
             user_class.save()
             messages.success(request, 'Teacher changed successfully!')
         return redirect('main:class', name)
 
     return render(request, "main/class.html", {
-        'school': user_school,
+        'school': school,
         'class': user_class,
         'students': students,
         'subjects': subjects,
@@ -259,31 +252,30 @@ def class_view(request, name):
 
 @login_required(login_url="main:login_view")
 def create_teacher(request, name):
-    user = request.user
-    user_school = get_object_or_404(School, user_id=user.id)
+    school = get_object_or_404(School, id=request.user.id)
     # creating teacher requires tokens
-    if request.method == 'POST' and user_school.checkTokens() > 0 and user_school.money > 0:
+    if request.method == 'POST' and school.canCreate():
        # if sufficient funds and post request sent, store values in teacher form
        teacherForm = TeacherForm(request.POST)
        if teacherForm.is_valid():
             teacher = teacherForm.save(commit=False)
             # assign teacher's user to current user
-            teacher.user = user
+            teacher.school = school
             # if argument name is not new, the building is old, so query the building
             if name != 'new':
-                user_class = get_object_or_404(Class, user_id=user.id, name=name)
-                teacher.subject = user_class.building
+                existingClass = get_object_or_404(Class, school_id=school.id, name=name)
+                teacher.subject = existingClass.building
             else:
                 # if argument name is new, attempt to create new subject and assign
                 subject = request.POST.get('subject') if bool(request.POST.get('subject', False)) else None
                 if subject is None:
                     messages.error(request, "Subject cannot be blank!")
                     return redirect(request.META.get('HTTP_REFERER', '/'))
-                subject, created = Subject.objects.get_or_create(user_id=user.id, name=subject)
+                subject, created = Subject.objects.get_or_create(school_id=school.id, name=subject)
                 teacher.subject = subject
             teacher.save()
             # decrease token
-            user_school.useToken()
+            school.useToken()
             messages.success(request, "Teacher creation successful!")
     else:
         messages.error(request, "Insufficient amount of action tokens or funds! Advance Year to reset your tokens and cut costs to make money!")
@@ -291,34 +283,33 @@ def create_teacher(request, name):
 
 @login_required(login_url="main:login_view")
 def all_teachers(request):
-    user = request.user
-    user_school = get_object_or_404(School, user_id=user.id)
-    subjects = Subject.objects.filter(user_id=user.id)
-    teachers = Teacher.objects.filter(user_id=user.id)
+    school = get_object_or_404(School, id=request.user.id)
+    subjects = Subject.objects.filter(school_id=school.id)
+    teachers = Teacher.objects.filter(school_id=school.id)
     teacherForm = TeacherForm()
 
     # user's financial info for school
-    costs = computeFinancials(user, user_school)
+    costs = computeFinancials(school)
 
     # if get request used, access and assign 'filter' value if valid
     filter = request.GET.get('filter') if bool(request.GET.get('filter', False)) else None
     if filter is not None:
         # if subject exists, get the subject to filter the teachers on the page
         try:
-            subject = Subject.objects.get(user_id=user.id, name=filter)
+            subject = Subject.objects.get(school_id=school.id, name=filter)
         except Subject.DoesNotExist:
             messages.error(request, "Subject cannot be blank!")
             return redirect('main:all_teachers')
         
         # filter teachers by the subject if input was valid
-        teachers = Teacher.objects.filter(user_id=user.id, subject=subject)
+        teachers = Teacher.objects.filter(school_id=school.id, subject=subject)
 
     # continuously compute the average skill and salaries based on filter value
     avgSkill = computeAvgSkill(teachers)
     avgSalary = computeAvgSalary(teachers)
     
     return render(request, "main/all_teachers.html", {
-        'school': user_school,
+        'school': school,
         'teachers': teachers,
         'subjects': subjects,
         'filter': filter,
@@ -330,25 +321,31 @@ def all_teachers(request):
 
 @login_required(login_url="main:login_view")
 def teacher(request, pk):
-    user = request.user
-    user_school = get_object_or_404(School, user_id=user.id)
-    subjects = Subject.objects.filter(user_id=user.id)
-    teacher = get_object_or_404(Teacher, user_id=user.id, id=pk)
-    classes = Class.objects.filter(user_id=request.user.id, teacher=teacher)
+    school = get_object_or_404(School, id=request.user.id)
+    subjects = Subject.objects.filter(school_id=school.id)
+    teacher = get_object_or_404(Teacher, school_id=school.id, id=pk)
+    classes = Class.objects.filter(school_id=school.id, teacher=teacher)
     teacherForm = TeacherForm(instance=teacher)
 
-    costs = computeFinancials(user, user_school)
+    # user's financial info for school
+    costs = computeFinancials(school)
 
     if request.method == 'POST':
+        # if post request sent on this page, store values into the teacher form
+        # with the instance corresponding to the specific teacher
         teacherForm = TeacherForm(request.POST, instance=teacher)
         if teacherForm.is_valid():
             teacher = teacherForm.save(commit=False)
-            teacher.user = user
+            # set teacher's creator to current user
+            teacher.school = school
+            # get value from input field and make it a subject if not found
             subject = request.POST.get('subject') if bool(request.POST.get('subject', False)) else None
             if subject is None:
+                # if error occurs, redirect back to teacher
                 messages.error(request, "Subject cannot be blank!")
                 return redirect('main:teacher', pk)
-            subject, created = Subject.objects.get_or_create(user_id=user.id, name=subject)
+            subject, created = Subject.objects.get_or_create(school_id=school.id, name=subject)
+            # assign teacher's subject to subject val
             teacher.subject = subject
             teacher.save()
             messages.success(request, "Teacher creation successful!")
@@ -356,7 +353,7 @@ def teacher(request, pk):
 
 
     return render(request, "main/teacher.html", {
-        'school': user_school,
+        'school': school,
         'teacher': teacher,
         'classes': classes,
         'subjects': subjects,
@@ -366,23 +363,23 @@ def teacher(request, pk):
 
 @login_required(login_url="main:login_view")
 def create_student(request):
-    user = request.user
-    user_school = get_object_or_404(School, user_id=user.id)
+    school = get_object_or_404(School, id=request.user.id)
     # creating student requires tokens
-    if request.method == 'POST' and user_school.checkTokens() > 0 and user_school.money > 0:
+    if request.method == 'POST' and school.canCreate():
         studentForm = StudentForm(request.POST)
         if studentForm.is_valid():
             student = studentForm.save(commit=False)
-            student.user = user
+            student.school = school
             # check for empty input
             major = request.POST.get('major') if bool(request.POST.get('major', False)) else None
             if major is None:
                 messages.error(request, "Major cannot be blank!")
                 return redirect(request.META.get('HTTP_REFERER', '/'))
-            subject, created = Subject.objects.get_or_create(user=user, name=major)
+            subject, created = Subject.objects.get_or_create(school_id=school.id, name=major)
             student.major = subject
             student.save()
-            user_school.useToken()
+            # spend a token
+            school.useToken()
             messages.success(request, "Student creation successful!")
     else:
         messages.error(request, "Insufficient amount of action tokens or funds! Advance Year to reset your tokens and cut costs to make money!")
@@ -391,28 +388,34 @@ def create_student(request):
 
 @login_required(login_url="main:login_view")
 def all_students(request):
-    user = request.user
-    user_school = get_object_or_404(School, user_id=user.id)
-    subjects = Subject.objects.filter(user_id=user.id)
-    students = Student.objects.filter(user_id=user.id)
+    school = get_object_or_404(School, id=request.user.id)
+    subjects = Subject.objects.filter(school_id=school.id)
+    students = Student.objects.filter(school_id=school.id)
     studentForm = StudentForm()
 
-    costs = computeFinancials(user, user_school)
+    # user's financial info for school
+    costs = computeFinancials(school)
 
+    # if dropdown filtering functionality used, get the query value and
+    # filter student major by it
     filter = request.GET.get('filter') if bool(request.GET.get('filter', False)) else None
+    # if subject exists, filter by it; otherwise return error and abort
     if filter is not None:
         try:
-            major = Subject.objects.get(user_id=user.id, name=filter)
+            major = Subject.objects.get(school_id=school.id, name=filter)
         except Subject.DoesNotExist:
             messages.error(request, "Subject cannot be blank!")
             return redirect('main:all_students')
-        students = Student.objects.filter(user_id=user.id, major=major)
+        # update students val
+        students = Student.objects.filter(school_id=school.id, major=major)
 
+    # recompute the grade distribution for students who are majoring
+    # in that subject
     gradeDist = computeAvgGradeDist(students)
     sorted_gradeDist = dict(sorted(gradeDist.items()))
     
     return render(request, "main/all_students.html", {
-        'school': user_school,
+        'school': school,
         'students': students,
         'subjects': subjects,
         'filter': filter,
@@ -423,24 +426,29 @@ def all_students(request):
 
 @login_required(login_url="main:login_view")
 def student(request, pk):
-    user = request.user
-    user_school = get_object_or_404(School, user_id=user.id)
-    subjects = Subject.objects.filter(user_id=user.id)
-    student = get_object_or_404(Student, user_id=user.id, id=pk)
-    classes = Class.objects.filter(user_id=user.id)
+    school = get_object_or_404(School, id=request.user.id)
+    subjects = Subject.objects.filter(school_id=school.id)
+    student = get_object_or_404(Student, school_id=school.id, id=pk)
+    classes = Class.objects.filter(school_id=school.id)
     studentForm = StudentForm(instance=student)
 
-    costs = computeFinancials(user, user_school)
+    # user's financial info for school
+    costs = computeFinancials(school)
 
     if request.method == 'POST':
+        # if post request used on this page, store values into the student
+        # form in the specific student's form
         studentForm = StudentForm(request.POST, instance=student)
         if studentForm.is_valid:
             student = studentForm.save(commit=False)
+            # attempt to get major from subject input field
             major = request.POST.get('major') if bool(request.POST.get('major', False)) else None
             if major is None:
                 messages.error(request, "Major cannot be blank!")
                 return redirect('main:student', pk)
-            subject, created = Subject.objects.get_or_create(user_id=user.id, name=major)
+            # if subject exists, use that subject for student's major; otherwise,
+            # create the new subject
+            subject, created = Subject.objects.get_or_create(school_id=school.id, name=major)
             student.major = subject
             student.save()
             messages.success(request, "Student modification successful!")
@@ -448,7 +456,7 @@ def student(request, pk):
 
 
     return render(request, "main/student.html", {
-        'school': user_school,
+        'school': school,
         'student': student,
         'classes': classes,
         'subjects': subjects,
@@ -458,29 +466,32 @@ def student(request, pk):
 
 @login_required(login_url="main:login_view")
 def nextYear(request):
-    user = request.user
-    user_school = get_object_or_404(School, user_id=user.id)
-    teachers = Teacher.objects.filter(user_id=user.id)
-    students = Student.objects.filter(user_id=user.id)
+    school = get_object_or_404(School, id=request.user.id)
+    teachers = Teacher.objects.filter(school_id=school.id)
+    students = Student.objects.filter(school_id=school.id)
+    classes = Class.objects.filter(school_id=school.id)
 
-    user_school.advanceYear()
+    school.advanceYear(computeFinancials(school))
+
+    for currClass in classes:
+        teacher = currClass.teacher
+        if teacher is not None:
+            for student in currClass.students.all():
+                student.changeGrade(teacher.skill)
     for student in students:
         student.progressYear()
-
-    user_school.payCosts(computeFinancials(user, user_school))
     
     messages.success(request, "Successfully advanced school year!")
-    return redirect('main:home')
+    return redirect(request.META.get('HTTP_REFERER', '/'))
 
 @login_required(login_url="main:login_view")
 def train(request, pk):
-    user = request.user
-    user_school = get_object_or_404(School, user_id=user.id)
-    teacher = get_object_or_404(Teacher, user_id=user.id, id=pk)
+    school = get_object_or_404(School, id=school.id)
+    teacher = get_object_or_404(Teacher, school_id=school.id, id=pk)
     # training teacher requires tokens
-    if user_school.checkTokens() > 0:
+    if school.checkTokens() > 0:
         teacher.train()
-        user_school.useToken()
+        school.useToken()
         messages.success(request, "Teacher successfully trained!")
     else:
         messages.error(request, "No tokens left! Advance Year to reset your tokens!")

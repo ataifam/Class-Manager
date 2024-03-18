@@ -1,27 +1,22 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 # Create your models here.
-class School(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
+class School(AbstractUser):
     name = models.CharField(max_length=30, default="My New School")
-    player_name = models.CharField(max_length=30, unique=True)
     year = models.IntegerField(default=1)
     actionTokens = models.IntegerField(default=3)
     money = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(1000000000)], blank=True, null=True, default=500000)
     tuition = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100000)], blank=True, null=True, default=50000)
 
-    #override save method to provide default for player name
-    def setName(self, *args, **kwargs):
-        self.player_name = self.user.username
-
-    def advanceYear(self):
+    def advanceYear(self, costs):
         self.year+=1
         # reset user action tokens every year
         self.actionTokens = 3
+        self.payCosts(costs)
         self.save()
 
     def payCosts(self, cost):
@@ -34,17 +29,22 @@ class School(models.Model):
     def useToken(self):
         self.actionTokens-=1
         self.save()
+    
+    def startOver(self):
+        self.name = "My New School"
+        self.year = 1
+        self.money = 500000
+        self.tuiton = 50000
+        Subject.objects.filter(school_id=self.id).delete()
+        self.save()
 
-@receiver(post_save, sender=User)
-def NewSchool(sender, instance, created, **kwargs):
-    if created:
-        school = School(user=instance)
-        school.setName()
-        school.save()
+    # creating requires > 0 tokens and > 0 current funds
+    def canCreate(self):
+        return self.actionTokens > 0 and self.money > 0
 
 
 class Subject(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    school = models.ForeignKey(School, on_delete=models.CASCADE, blank=True, null=True)
     name = models.CharField(max_length=60, unique=True)
 
     def __str__(self):
@@ -53,7 +53,7 @@ class Subject(models.Model):
         )
 
 class Teacher(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    school = models.ForeignKey(School, on_delete=models.CASCADE, blank=True, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, blank=True, null=True)
@@ -67,7 +67,7 @@ class Teacher(models.Model):
         (5, 'Professor'),
     ]
 
-    skill = models.IntegerField(choices=SKILL, default=1, blank=True, null=True)
+    skill = models.IntegerField(choices=SKILL, default=1, blank=False, null=True)
 
     def __str__(self):
         return (
@@ -102,12 +102,12 @@ def NewTeacher(sender, instance, created, **kwargs):
         teacher.save()
     
 class Student(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    school = models.ForeignKey(School, on_delete=models.CASCADE, blank=True, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     major = models.ForeignKey(Subject, on_delete=models.CASCADE, blank=True, null=True)
-    year = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(4)], blank=True, null=True, default=0)
-    average_grade = models.CharField(max_length=1, default='C')
+    year = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(4)], blank=True, null=True, default=1)
+    average_grade = models.FloatField(validators=[MinValueValidator(0), MaxValueValidator(100)], default='70')
 
     def __str__(self):
         return (
@@ -130,13 +130,29 @@ class Student(models.Model):
             return 'Junior'
         else:
             return 'Senior'
+    
+    def getLetterGrade(self):
+        if self.average_grade >= 90:
+            return 'A'
+        elif self.average_grade >= 80:
+            return 'B'
+        elif self.average_grade >= 70:
+            return 'C'
+        elif self.average_grade >= 60:
+            return 'D'
+        else:
+            return 'F'
+    
+    def changeGrade(self, factor):
+        self.average_grade+=(1.50*factor)
+        self.save()
 
 class Class(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    school = models.ForeignKey(School, on_delete=models.CASCADE, blank=True, null=True)
     name = models.CharField(max_length=60, unique=True)
     building = models.ForeignKey(Subject, on_delete=models.CASCADE, blank=True, null=True)
-    room = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(1000)], blank=True, null=True)
-    teacher = models.ForeignKey(Teacher, related_name="taught_by", on_delete=models.DO_NOTHING, blank=True, null=True)
+    room = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(1000)], blank=False, null=True)
+    teacher = models.ForeignKey(Teacher, related_name="taught_by", on_delete=models.SET_NULL, blank=True, null=True)
     students = models.ManyToManyField(Student, related_name="taken_by", blank=True)
 
     def __str__(self):
