@@ -58,7 +58,11 @@
                 <div class="card-body">
                     <h5 class="card-title">
                         <span style="width: 100%;" class="m-1 badge bg-dark">Faculty: <span class="badge bg-secondary">
-                                <a class="col-header link-light" href="{% url 'main:teacher' class.teacher.id %}">{{class.teacher }}</a></span></span>
+                            {% if class.teacher %}
+                                <a class="col-header link-light" href="{% url 'main:teacher' class.teacher.id %}">{{class.teacher}}</a></span></span>
+                            {% else %}
+                                <a class="col-header link-light">TBA</a></span></span>TBA
+                            {% endif %}
                         <br />
                         <span style="width: 100%;" class="m-1 badge bg-dark">Room <span class="badge bg-secondary"> {{class.room }}</span></span>
                         <br />

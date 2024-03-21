@@ -45,7 +45,12 @@ class School(AbstractUser):
 
 class Subject(models.Model):
     school = models.ForeignKey(School, on_delete=models.CASCADE, blank=True, null=True)
-    name = models.CharField(max_length=60, unique=True)
+    name = models.CharField(max_length=60)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['school', 'name'], name='unique subject')
+        ]
 
     def __str__(self):
         return (
@@ -114,6 +119,10 @@ class Student(models.Model):
                 f"{self.first_name+' '+self.last_name}"
         )
     
+    def changeGrade(self, factor):
+        self.average_grade+=(1.50*factor)
+        self.save()
+    
     def progressYear(self):
         if self.year == 4:
             self.delete()
@@ -142,19 +151,19 @@ class Student(models.Model):
             return 'D'
         else:
             return 'F'
-    
-    def changeGrade(self, factor):
-        self.average_grade+=(1.50*factor)
-        self.save()
 
 class Class(models.Model):
     school = models.ForeignKey(School, on_delete=models.CASCADE, blank=True, null=True)
-    name = models.CharField(max_length=60, unique=True)
+    name = models.CharField(max_length=60)
     building = models.ForeignKey(Subject, on_delete=models.CASCADE, blank=True, null=True)
     room = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(1000)], blank=False, null=True)
     teacher = models.ForeignKey(Teacher, related_name="taught_by", on_delete=models.SET_NULL, blank=True, null=True)
     students = models.ManyToManyField(Student, related_name="taken_by", blank=True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['school', 'name'], name='unique class')
+        ]
     def __str__(self):
         return (
                 f"{self.name}"

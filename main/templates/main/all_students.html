@@ -33,9 +33,10 @@
 </div>
 <br />
 
-<form action="" id="filter">
-  <select name="filter">
-    <option value="all" selected>All</option>
+<form action="" id="filter1">
+  <select aria-label="label for the select" name="major-filter" onchange="this.form.submit()">
+    <option disabled selected value> ------ </option>
+    <option value="all">All</option>
     {% for subject in subjects %}
     <option value="{{subject}}">{{subject}}</option>
     {% endfor %}
@@ -43,15 +44,17 @@
 </form>
 <br>
 
-<div id="all" class="container overflow-hidden text-center">
+<div class="container overflow-hidden text-center">
   <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
     {% for student in students %}
-    <div class="col-2">
+    <div id="all" class="col-2">
       <div id="{{student.id}}" class="card mb-3" style="max-width: 18rem;">
+
         <div class="card-header bg-primary">
           <h5><a class="title-header link-dark bg-primary fw-medium"
               href="{% url 'main:student' student.id %}">{{student|title}}</a></h5>
         </div>
+
         <div class="card-body">
           <h5 class="card-title">
             <span style="width: 100%;" class="m-1 badge bg-dark">Year: <span class="badge bg-secondary"> {{student.getYear}}</span></span>
@@ -65,7 +68,7 @@
           </a>
         </div>
       </div>
-    </div>
+      </div>
     {% endfor %}
     <div id="start_create_student" class="col-2">
       <div class="card mb-3" style="max-width: 18rem">
@@ -116,6 +119,7 @@
           </div>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </div>

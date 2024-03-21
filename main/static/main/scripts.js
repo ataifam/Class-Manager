@@ -39,16 +39,13 @@ function toggleEditSection(id) {
       });
 
       var prev = document.querySelector("#all");
-    document.getElementById("filter").onchange = (el) => {
-      prev.style.display = "none";
-      prev = document.getElementById(el.target.value);
-      prev.style.display = "block";
-    };
-    
-
-    document.querySelector("#filter1").onchange = (el) => {
-      document.querySelector("#filter1").submit();
-    };
+      if(prev != null){
+        document.getElementById("filter").onchange = (el) => {
+          prev.style.display = "none";
+          prev = document.getElementById(el.target.value);
+          prev.style.display = "block";
+        };
+      }
   });
 
   

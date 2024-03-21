@@ -32,7 +32,8 @@
 <br />
 
 <form action="" id="filter1">
-  <select name="filter1">
+  <select aria-label="label for the select" name="focus-filter" onchange="this.form.submit()">
+    <option disabled selected value> ------ </option>
     <option value="all">All</option>
     {% for subject in subjects %}
     <option value="{{subject}}">{{subject}}</option>

@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import SubjectForm, ClassForm, StudentForm, TeacherForm, LoginForm, SignUpForm
 from .models import School, Subject, Class, Student, Teacher
+from django.db.models import F, Value, Func, CharField
+from django.db.models.functions import Concat
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout, get_user_model
@@ -57,9 +59,17 @@ def search(request):
             # find at most 15 possible queries matching some part of q
             subjects = Subject.objects.filter(school_id=school.id, name__icontains=q)[0:15]
             classes = Class.objects.filter(school_id=school.id, name__icontains=q)[0:15]
-            # search both first and last names of teachers and students
-            teachers = (Teacher.objects.filter(school_id=school.id, first_name__icontains=q) | Teacher.objects.filter(school_id=school.id, last_name__icontains=q))[0:15]
-            students = (Student.objects.filter(school_id=school.id, first_name__icontains=q) | Student.objects.filter(school_id=school.id, last_name__icontains=q))[0:15]
+            # search full names of teachers and students by concatenating their first and
+            # last name fields together in a new virtual field
+            teacher_query = Teacher.objects.filter(school_id=school.id).annotate(
+                full_name=Concat('first_name', Value(' '), 'last_name', output_field=CharField())
+                )
+            student_query = Student.objects.filter(school_id=school.id).annotate(
+                full_name=Concat('first_name', Value(' '), 'last_name', output_field=CharField())
+                )
+            # query against new full_name field
+            teachers = (teacher_query.filter(full_name__icontains=q))[0:15]
+            students = (student_query.filter(full_name__icontains=q))[0:15]
     else:
         messages.error(request, "Invalid search entry. Please try again!")
         return redirect(request.META.get('HTTP_REFERER', '/'))
@@ -148,7 +158,7 @@ def logout_view(request):
         # logout user
         logout(request)
         messages.success(request, 'Logged out successfully.')
-        return school_id('main:login_view')
+    return redirect('main:login_view')
 
 
 @login_required(login_url="main:login_view")
@@ -175,7 +185,7 @@ def delete(request, pk, option):
     elif option == 'school':
         school = get_object_or_404(School, id=pk)
         school.startOver()
-    return redirect(request.META.get('HTTP_REFERER', '/'))
+    return redirect('main:home')
 
 @login_required(login_url="main:login_view")
 def building(request, pk):
@@ -261,12 +271,12 @@ def create_teacher(request, name):
             teacher = teacherForm.save(commit=False)
             # assign teacher's user to current user
             teacher.school = school
-            # if argument name is not new, the building is old, so query the building
+            # if on class page, assign teacher's specialization to that class' building
             if name != 'new':
                 existingClass = get_object_or_404(Class, school_id=school.id, name=name)
                 teacher.subject = existingClass.building
             else:
-                # if argument name is new, attempt to create new subject and assign
+                # if not on a class page, assign teacher's specialization to whatever they input
                 subject = request.POST.get('subject') if bool(request.POST.get('subject', False)) else None
                 if subject is None:
                     messages.error(request, "Subject cannot be blank!")
@@ -278,7 +288,8 @@ def create_teacher(request, name):
             school.useToken()
             messages.success(request, "Teacher creation successful!")
     else:
-        messages.error(request, "Insufficient amount of action tokens or funds! Advance Year to reset your tokens and cut costs to make money!")
+        messages.error(request, "Insufficient amount of action tokens or funds!\
+                       Advance Year to reset your tokens and cut costs to make money!")
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
 @login_required(login_url="main:login_view")
@@ -292,8 +303,8 @@ def all_teachers(request):
     costs = computeFinancials(school)
 
     # if get request used, access and assign 'filter' value if valid
-    filter = request.GET.get('filter') if bool(request.GET.get('filter', False)) else None
-    if filter is not None:
+    filter = request.GET.get('focus-filter') if bool(request.GET.get('focus-filter', False)) else None
+    if filter is not None and not filter == "all":
         # if subject exists, get the subject to filter the teachers on the page
         try:
             subject = Subject.objects.get(school_id=school.id, name=filter)
@@ -398,9 +409,9 @@ def all_students(request):
 
     # if dropdown filtering functionality used, get the query value and
     # filter student major by it
-    filter = request.GET.get('filter') if bool(request.GET.get('filter', False)) else None
+    filter = request.GET.get('major-filter') if bool(request.GET.get('major-filter', False)) else None
     # if subject exists, filter by it; otherwise return error and abort
-    if filter is not None:
+    if filter is not None and not filter == "all":
         try:
             major = Subject.objects.get(school_id=school.id, name=filter)
         except Subject.DoesNotExist:
@@ -467,7 +478,6 @@ def student(request, pk):
 @login_required(login_url="main:login_view")
 def nextYear(request):
     school = get_object_or_404(School, id=request.user.id)
-    teachers = Teacher.objects.filter(school_id=school.id)
     students = Student.objects.filter(school_id=school.id)
     classes = Class.objects.filter(school_id=school.id)
 
@@ -486,7 +496,7 @@ def nextYear(request):
 
 @login_required(login_url="main:login_view")
 def train(request, pk):
-    school = get_object_or_404(School, id=school.id)
+    school = get_object_or_404(School, id=request.user.id)
     teacher = get_object_or_404(Teacher, school_id=school.id, id=pk)
     # training teacher requires tokens
     if school.checkTokens() > 0:
